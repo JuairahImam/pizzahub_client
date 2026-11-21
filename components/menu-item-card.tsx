@@ -1,37 +1,64 @@
 "use client"
 
 import Image from "next/image"
+import { Plus } from "lucide-react"
 import { useState } from "react"
 
 import { Price } from "@/components/price"
+import { useCart } from "@/hooks/use-cart"
 import { cn } from "@/lib/utils"
 
 const FALLBACK_IMAGE = "/images/hero-pizza.jpg"
 
 type MenuItemCardProps = {
+  id: string
   name: string
   description: string
   imageSrc: string
   imageAlt: string
   category: string
   price: number
+  restaurantId: string
   restaurantName?: string | null
+  available?: boolean
   priority?: boolean
   className?: string
 }
 
 export function MenuItemCard({
+  id,
   name,
   description,
   imageSrc,
   imageAlt,
   category,
   price,
+  restaurantId,
   restaurantName,
+  available = true,
   priority = false,
   className,
 }: MenuItemCardProps) {
   const [src, setSrc] = useState(imageSrc || FALLBACK_IMAGE)
+  const [added, setAdded] = useState(false)
+  const { addItem } = useCart()
+
+  function handleAddToCart() {
+    if (!available) return
+
+    addItem({
+      menuItemId: id,
+      name,
+      price,
+      imageUrl: imageSrc || FALLBACK_IMAGE,
+      category,
+      restaurantId,
+      restaurantName: restaurantName ?? "PizzaHub",
+    })
+
+    setAdded(true)
+    window.setTimeout(() => setAdded(false), 1500)
+  }
 
   return (
     <article
@@ -73,9 +100,23 @@ export function MenuItemCard({
 
         <div className="mt-auto flex items-center justify-between gap-3 border-t border-border pt-4">
           <Price value={price} />
-          <span className="text-xs font-medium text-muted-foreground">
-            Available
-          </span>
+          <button
+            type="button"
+            onClick={handleAddToCart}
+            disabled={!available}
+            className={cn(
+              "inline-flex h-9 items-center gap-2 rounded-lg px-3 text-sm font-medium transition-colors",
+              available
+                ? added
+                  ? "bg-secondary text-primary"
+                  : "bg-primary text-primary-foreground hover:bg-primary-hover"
+                : "cursor-not-allowed bg-muted text-muted-foreground",
+              "disabled:opacity-60"
+            )}
+          >
+            <Plus className="size-4" aria-hidden="true" />
+            {added ? "Added" : "Add to cart"}
+          </button>
         </div>
       </div>
     </article>

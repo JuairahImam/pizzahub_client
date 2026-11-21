@@ -14,8 +14,7 @@ import {
 import { ButtonLink } from "@/components/button-link"
 import { PopularMenu } from "@/components/popular-menu"
 import { SectionHeading } from "@/components/section-heading"
-import { SiteFooter } from "@/components/site-footer"
-import { SiteHeader } from "@/components/site-header"
+
 import { cn } from "@/lib/utils"
 
 export const metadata: Metadata = {
@@ -67,8 +66,6 @@ export default function HomePage() {
       >
         Skip to content
       </a>
-
-      <SiteHeader />
 
       <main id="main-content" tabIndex={-1} className="outline-none">
         <section
@@ -360,7 +357,6 @@ export default function HomePage() {
         </section>
       </main>
 
-      <SiteFooter />
     </>
   )
 }

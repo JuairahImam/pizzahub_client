@@ -75,13 +75,16 @@ export function PopularMenu() {
           {data.menuItems.map((item, index) => (
             <MenuItemCard
               key={item._id}
+              id={item._id}
               name={item.name}
               description={item.description}
               imageSrc={item.imageUrl}
               imageAlt={`${item.name} from ${item.restaurant?.name ?? "PizzaHub"}`}
               category={item.category}
               price={item.price}
+              restaurantId={item.restaurantId}
               restaurantName={item.restaurant?.name}
+              available={item.isAvailable}
               priority={index < 2}
             />
           ))}

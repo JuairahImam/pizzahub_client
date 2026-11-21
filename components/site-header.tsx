@@ -1,12 +1,13 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { ChevronDown, LogOut, Menu, Pizza, User, X } from "lucide-react"
+import { ChevronDown, LogOut, Menu, Pizza, ShoppingCart, User, X } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 import { ButtonLink } from "@/components/button-link"
 import { siteNav } from "@/lib/navigation"
 import { useAuth } from "@/hooks/use-auth"
+import { useCart } from "@/hooks/use-cart"
 import { cn } from "@/lib/utils"
 
 const focusRing =
@@ -15,6 +16,7 @@ const focusRing =
 export function SiteHeader() {
   const router = useRouter()
   const { user, loading: authLoading, logout } = useAuth()
+  const { totalItems } = useCart()
   const [isOpen, setIsOpen] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [signingOut, setSigningOut] = useState(false)
@@ -194,6 +196,22 @@ export function SiteHeader() {
             )}
           </div>
 
+          <a
+            href="/cart"
+            aria-label={`Cart with ${totalItems} item${totalItems === 1 ? "" : "s"}`}
+            className={cn(
+              "relative inline-flex size-11 items-center justify-center rounded-lg border border-border text-foreground transition-colors hover:bg-secondary",
+              focusRing
+            )}
+          >
+            <ShoppingCart className="size-5" aria-hidden="true" />
+            {totalItems > 0 ? (
+              <span className="absolute -top-1 -right-1 grid min-w-5 place-items-center rounded-full bg-primary px-1 text-xs font-medium text-primary-foreground">
+                {totalItems}
+              </span>
+            ) : null}
+          </a>
+
           <button
             type="button"
             aria-expanded={isOpen}
@@ -285,6 +303,27 @@ export function SiteHeader() {
               </ButtonLink>
             </li>
           ) : null}
+
+          <li>
+            <a
+              href="/cart"
+              onClick={() => setIsOpen(false)}
+              className={cn(
+                "flex items-center justify-between rounded-lg px-3 py-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-primary",
+                focusRing
+              )}
+            >
+              <span className="flex items-center gap-2">
+                <ShoppingCart className="size-4" aria-hidden="true" />
+                Cart
+              </span>
+              {totalItems > 0 ? (
+                <span className="grid min-w-5 place-items-center rounded-full bg-primary px-1.5 text-xs font-medium text-primary-foreground">
+                  {totalItems}
+                </span>
+              ) : null}
+            </a>
+          </li>
 
           <li className="pt-2">
             <ButtonLink
