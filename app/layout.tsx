@@ -1,8 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google"
 
 import "./globals.css"
-import { SiteFooter } from "@/components/site-footer"
-import { SiteHeader } from "@/components/site-header"
+import { SiteChrome } from "@/components/site-chrome"
 import { ThemeProvider } from "@/components/theme-provider"
 import { AuthProvider } from "@/lib/auth/auth-context"
 import { CartProvider } from "@/lib/cart/cart-context"
@@ -30,9 +29,7 @@ export default function RootLayout({
         <ThemeProvider>
           <AuthProvider>
             <CartProvider>
-              <SiteHeader />
-              {children}
-              <SiteFooter />
+              <SiteChrome>{children}</SiteChrome>
             </CartProvider>
           </AuthProvider>
         </ThemeProvider>

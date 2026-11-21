@@ -49,3 +49,9 @@ export type CreateOrderResponse = {
   message: string
   order: Order
 }
+
+export type VendorOrdersResponse = {
+  success: boolean
+  count: number
+  orders: Order[]
+}
