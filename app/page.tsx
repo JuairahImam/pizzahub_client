@@ -1,9 +1,18 @@
 import type { Metadata } from "next"
 import Image from "next/image"
-import { ArrowRight, ChefHat, Flame, Leaf, Pizza, Users } from "lucide-react"
+import {
+  ArrowRight,
+  ChefHat,
+  CupSoda,
+  Flame,
+  Leaf,
+  Pizza,
+  Sandwich,
+  Users,
+} from "lucide-react"
 
 import { ButtonLink } from "@/components/button-link"
-import { PizzaCard } from "@/components/pizza-card"
+import { PopularMenu } from "@/components/popular-menu"
 import { SectionHeading } from "@/components/section-heading"
 import { SiteFooter } from "@/components/site-footer"
 import { SiteHeader } from "@/components/site-header"
@@ -14,41 +23,6 @@ export const metadata: Metadata = {
   description:
     "Explore PizzaHub's handcrafted pizzas, from classic Margherita to BBQ Chicken. Good dough, thoughtful toppings, and a table made for sharing.",
 }
-
-const featuredPizzas = [
-  {
-    name: "Margherita",
-    description:
-      "San Marzano tomato, fresh mozzarella, basil, and a finish of olive oil.",
-    imageSrc: "/images/margherita.jpg",
-    imageAlt: "Margherita pizza topped with fresh basil leaves",
-    tag: "Vegetarian",
-  },
-  {
-    name: "Pepperoni",
-    description:
-      "Cupped pepperoni, aged mozzarella, and oregano over house red sauce.",
-    imageSrc: "/images/pepperoni.jpg",
-    imageAlt: "Pepperoni pizza with crisp-edged slices and melted cheese",
-    tag: "Classic",
-  },
-  {
-    name: "BBQ Chicken",
-    description:
-      "Smoky barbecue sauce, roasted chicken, red onion, and fresh cilantro.",
-    imageSrc: "/images/bbq-chicken.jpg",
-    imageAlt: "BBQ chicken pizza with red onion and fresh cilantro",
-    tag: "Smoky",
-  },
-  {
-    name: "Garden Ricotta",
-    description:
-      "Spinach, whipped ricotta, roasted garlic, and bubbling mozzarella.",
-    imageSrc: "/images/garden-ricotta.jpg",
-    imageAlt: "Garden pizza topped with spinach and dollops of ricotta",
-    tag: "Vegetarian",
-  },
-] as const
 
 const features = [
   {
@@ -192,6 +166,64 @@ export default function HomePage() {
         </section>
 
         <section
+          id="categories"
+          aria-labelledby="categories-heading"
+          tabIndex={-1}
+          className="scroll-mt-24 border-y border-border bg-background outline-none"
+        >
+          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
+            <SectionHeading
+              id="categories-heading"
+              eyebrow="Browse by category"
+              title="Find your kind of slice"
+              description="Start with a category, or jump straight into the full menu."
+            />
+
+            <div className="mt-10 grid gap-4 sm:grid-cols-3">
+              {[
+                {
+                  label: "Pizza",
+                  description: "Classic and specialty pies",
+                  href: "/menu?category=Pizza",
+                  icon: Pizza,
+                },
+                {
+                  label: "Sides",
+                  description: "Bread, dips, and extras",
+                  href: "/menu?category=Sides",
+                  icon: Sandwich,
+                },
+                {
+                  label: "Drinks",
+                  description: "Cold and refreshing",
+                  href: "/menu?category=Drinks",
+                  icon: CupSoda,
+                },
+              ].map(({ label, description, href, icon: Icon }) => (
+                <a
+                  key={label}
+                  href={href}
+                  className={cn(
+                    "group flex items-center gap-4 rounded-xl border border-border bg-card p-6 transition-colors hover:border-primary/40 hover:bg-secondary",
+                    focusRing
+                  )}
+                >
+                  <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-secondary text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                    <Icon className="size-6" aria-hidden="true" />
+                  </span>
+                  <div>
+                    <h3 className="text-lg font-semibold tracking-tight text-foreground">
+                      {label}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">{description}</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section
           id="menu"
           aria-labelledby="menu-heading"
           tabIndex={-1}
@@ -202,24 +234,76 @@ export default function HomePage() {
               <SectionHeading
                 id="menu-heading"
                 eyebrow="From the oven"
-                title="Pizzas worth passing around"
-                description="Classic combinations, thoughtful toppings, and a crust that gets the attention it deserves."
+                title="Popular right now"
+                description="A few favorites from our kitchen, updated from the live menu."
               />
               <a
-                href="#about"
+                href="/menu"
                 className={cn(
                   "inline-flex shrink-0 items-center gap-2 rounded-sm py-1 text-sm font-medium text-primary hover:text-primary-hover",
                   focusRing
                 )}
               >
-                How we bake
+                View full menu
                 <ArrowRight className="size-4" aria-hidden="true" />
               </a>
             </div>
 
-            <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {featuredPizzas.map((pizza) => (
-                <PizzaCard key={pizza.name} {...pizza} />
+            <div className="mt-10">
+              <PopularMenu />
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="how-it-works"
+          aria-labelledby="how-heading"
+          tabIndex={-1}
+          className="scroll-mt-24 border-y border-border bg-secondary outline-none"
+        >
+          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
+            <SectionHeading
+              id="how-heading"
+              eyebrow="How it works"
+              title="Good pizza, made simple"
+              description="A few steps from craving to table."
+            />
+
+            <div className="mt-10 grid gap-6 sm:grid-cols-3">
+              {[
+                {
+                  step: "01",
+                  title: "Choose your pizza",
+                  description:
+                    "Browse the menu and pick your favorites, from classic Margherita to BBQ Chicken.",
+                },
+                {
+                  step: "02",
+                  title: "We bake it fresh",
+                  description:
+                    "Every pizza is built when you order it, with dough that has had time to rest.",
+                },
+                {
+                  step: "03",
+                  title: "Share and enjoy",
+                  description:
+                    "Served hot, ready to land in the middle of the table.",
+                },
+              ].map(({ step, title, description }) => (
+                <article
+                  key={step}
+                  className="rounded-xl border border-border bg-card p-6"
+                >
+                  <span className="text-sm font-semibold text-accent">
+                    {step}
+                  </span>
+                  <h3 className="mt-3 text-lg font-semibold tracking-tight text-foreground">
+                    {title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                    {description}
+                  </p>
+                </article>
               ))}
             </div>
           </div>
