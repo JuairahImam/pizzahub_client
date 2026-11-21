@@ -74,3 +74,45 @@ export async function apiGet<T>(
 
   return data as T
 }
+
+export async function apiPost<T>(
+  path: string,
+  body?: unknown
+): Promise<T> {
+  const token = authTokenGetter ? authTokenGetter() : null
+
+  let response: Response
+
+  try {
+    response = await fetch(buildUrl(path), {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: body === undefined ? undefined : JSON.stringify(body),
+      cache: "no-store",
+    })
+  } catch {
+    throw new ApiError("Network error. Please check your connection.", 0)
+  }
+
+  let data: unknown = null
+
+  try {
+    data = await response.json()
+  } catch {
+    data = null
+  }
+
+  if (!response.ok) {
+    const message =
+      (data as { message?: string } | null)?.message ??
+      `Request failed with status ${response.status}`
+
+    throw new ApiError(message, response.status)
+  }
+
+  return data as T
+}
