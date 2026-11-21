@@ -1,6 +1,12 @@
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5001"
 
+let authTokenGetter: (() => string | null) | null = null
+
+export function setAuthTokenGetter(getter: (() => string | null) | null) {
+  authTokenGetter = getter
+}
+
 export class ApiError extends Error {
   status: number
 
@@ -35,11 +41,14 @@ export async function apiGet<T>(
 ): Promise<T> {
   let response: Response
 
+  const token = authTokenGetter ? authTokenGetter() : null
+
   try {
     response = await fetch(buildUrl(path, params), {
       method: "GET",
       headers: {
         Accept: "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       cache: "no-store",
     })
