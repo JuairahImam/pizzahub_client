@@ -37,18 +37,19 @@ function buildUrl(path: string, params?: QueryParams) {
 
 export async function apiGet<T>(
   path: string,
-  params?: QueryParams
+  params?: QueryParams,
+  token?: string | null
 ): Promise<T> {
   let response: Response
 
-  const token = authTokenGetter ? authTokenGetter() : null
+  const resolvedToken = token ?? (authTokenGetter ? authTokenGetter() : null)
 
   try {
     response = await fetch(buildUrl(path, params), {
       method: "GET",
       headers: {
         Accept: "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(resolvedToken ? { Authorization: `Bearer ${resolvedToken}` } : {}),
       },
       cache: "no-store",
     })
@@ -77,9 +78,10 @@ export async function apiGet<T>(
 
 export async function apiPost<T>(
   path: string,
-  body?: unknown
+  body?: unknown,
+  token?: string | null
 ): Promise<T> {
-  const token = authTokenGetter ? authTokenGetter() : null
+  const resolvedToken = token ?? (authTokenGetter ? authTokenGetter() : null)
 
   let response: Response
 
@@ -89,7 +91,7 @@ export async function apiPost<T>(
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(resolvedToken ? { Authorization: `Bearer ${resolvedToken}` } : {}),
       },
       body: body === undefined ? undefined : JSON.stringify(body),
       cache: "no-store",

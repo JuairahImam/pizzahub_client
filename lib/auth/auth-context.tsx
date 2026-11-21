@@ -105,11 +105,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [restoreSession])
 
-  // Re-sync token getter whenever the token changes.
-  useEffect(() => {
-    setAuthTokenGetter(() => accessToken)
-  }, [accessToken])
-
   const login = useCallback(async (email: string, password: string) => {
     const result = await signInRequest(email, password)
     setUser(result.user)

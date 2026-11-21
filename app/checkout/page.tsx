@@ -8,6 +8,7 @@ import { PageContainer } from "@/components/page-container"
 import { Price } from "@/components/price"
 import { ProtectedRoute } from "@/components/protected-route"
 import { Button } from "@/components/ui/button"
+import { useAuth } from "@/hooks/use-auth"
 import { useCart } from "@/hooks/use-cart"
 import { ApiError, apiPost } from "@/lib/api/client"
 import { cn } from "@/lib/utils"
@@ -22,6 +23,7 @@ function validatePhone(value: string) {
 
 export default function CheckoutPage() {
   const router = useRouter()
+  const { accessToken } = useAuth()
   const { items, subtotal, clearCart, isLoaded } = useCart()
 
   const [address, setAddress] = useState("")
@@ -60,14 +62,18 @@ export default function CheckoutPage() {
     setLoading(true)
 
     try {
-      const response = await apiPost<CreateOrderResponse>("/api/orders", {
-        items: items.map((item) => ({
-          menuItemId: item.menuItemId,
-          quantity: item.quantity,
-        })),
-        deliveryAddress: trimmedAddress,
-        contactPhone: trimmedPhone,
-      })
+      const response = await apiPost<CreateOrderResponse>(
+        "/api/orders",
+        {
+          items: items.map((item) => ({
+            menuItemId: item.menuItemId,
+            quantity: item.quantity,
+          })),
+          deliveryAddress: trimmedAddress,
+          contactPhone: trimmedPhone,
+        },
+        accessToken
+      )
 
       if (!response.success || !response.order?._id) {
         setError(response.message || "Unable to create order.")
