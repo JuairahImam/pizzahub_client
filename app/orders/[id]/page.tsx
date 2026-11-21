@@ -6,34 +6,14 @@ import { useEffect, useState } from "react"
 
 import { EmptyState } from "@/components/empty-state"
 import { ErrorState } from "@/components/error-state"
+import { OrderStatusBadge } from "@/components/order-status-badge"
 import { PageContainer } from "@/components/page-container"
 import { useAuth } from "@/hooks/use-auth"
 import { Price } from "@/components/price"
 import { ProtectedRoute } from "@/components/protected-route"
 
 import { ApiError, apiGet } from "@/lib/api/client"
-import { cn } from "@/lib/utils"
 import type { Order } from "@/types/order"
-
-const STATUS_LABELS: Record<Order["status"], string> = {
-  PENDING: "Pending",
-  CONFIRMED: "Confirmed",
-  PREPARING: "Preparing",
-  OUT_FOR_DELIVERY: "Out for delivery",
-  DELIVERED: "Delivered",
-  REJECTED: "Rejected",
-  CANCELLED: "Cancelled",
-}
-
-const STATUS_STYLES: Record<Order["status"], string> = {
-  PENDING: "bg-accent/20 text-accent-foreground",
-  CONFIRMED: "bg-primary/10 text-primary",
-  PREPARING: "bg-primary/10 text-primary",
-  OUT_FOR_DELIVERY: "bg-primary/10 text-primary",
-  DELIVERED: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
-  REJECTED: "bg-destructive/10 text-destructive",
-  CANCELLED: "bg-muted text-muted-foreground",
-}
 
 function formatDate(value: string) {
   const date = new Date(value)
@@ -248,14 +228,7 @@ export default function OrderDetailsPage() {
                   </h2>
                   <div className="mt-4 flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">Status</span>
-                    <span
-                      className={cn(
-                        "inline-flex items-center rounded-full px-3 py-1 text-xs font-medium",
-                        STATUS_STYLES[order.status]
-                      )}
-                    >
-                      {STATUS_LABELS[order.status]}
-                    </span>
+                    <OrderStatusBadge status={order.status} />
                   </div>
                   <div className="mt-3 flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">Total</span>

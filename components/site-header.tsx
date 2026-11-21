@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { ChevronDown, LogOut, Menu, Pizza, ShoppingCart, User, X } from "lucide-react"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
 
 import { ButtonLink } from "@/components/button-link"
@@ -158,6 +159,17 @@ export function SiteHeader() {
                     role="menu"
                     className="absolute right-0 z-50 mt-2 w-44 rounded-lg border border-border bg-card p-1 shadow-md"
                   >
+                    <Link
+                      href="/orders"
+                      role="menuitem"
+                      onClick={() => setUserMenuOpen(false)}
+                      className={cn(
+                        "flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-secondary",
+                        focusRing
+                      )}
+                    >
+                      My Orders
+                    </Link>
                     <button
                       type="button"
                       role="menuitem"
@@ -269,6 +281,16 @@ export function SiteHeader() {
                 Signed in as{" "}
                 <span className="font-medium text-foreground">{user.name}</span>
               </p>
+              <Link
+                href="/orders"
+                onClick={() => setIsOpen(false)}
+                className={cn(
+                  "flex w-full items-center gap-2 rounded-lg px-3 py-3 text-sm font-medium text-foreground transition-colors hover:bg-secondary",
+                  focusRing
+                )}
+              >
+                My Orders
+              </Link>
               <button
                 type="button"
                 disabled={signingOut}
