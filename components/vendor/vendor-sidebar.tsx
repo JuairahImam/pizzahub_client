@@ -33,7 +33,7 @@ const NAV_ITEMS: NavItem[] = [
     label: "Restaurant",
     href: "/vendor/restaurant",
     icon: ChefHat,
-    enabled: false,
+    enabled: true,
   },
   {
     label: "Menu",
