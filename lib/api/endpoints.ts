@@ -25,4 +25,7 @@ export const ENDPOINTS = {
   adminDashboardOverview: "/api/admin/dashboard/overview",
   adminUsers: "/api/admin/users",
   adminUser: (id: string) => `/api/admin/users/${encodeURIComponent(id)}`,
+  adminTransactions: "/api/admin/transactions",
+  adminTransaction: (id: string) =>
+    `/api/admin/transactions/${encodeURIComponent(id)}`,
 } as const
