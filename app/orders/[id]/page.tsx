@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
 import { EmptyState } from "@/components/empty-state"
+import { OrderProgressTimeline } from "@/components/order-progress-timeline"
 import { ErrorState } from "@/components/error-state"
 import { OrderStatusBadge } from "@/components/order-status-badge"
 import { PageContainer } from "@/components/page-container"
@@ -184,6 +185,26 @@ export default function OrderDetailsPage() {
 
                   <section className="rounded-xl border border-border bg-card p-6">
                     <h2 className="text-lg font-semibold tracking-tight text-foreground">
+                      Order progress
+                    </h2>
+                    <div className="mt-5">
+                      <OrderProgressTimeline order={order} />
+                    </div>
+                    {order.status === "REJECTED" && order.rejectionReason ? (
+                      <p className="mt-4 text-sm text-destructive">
+                        {order.rejectionReason}
+                      </p>
+                    ) : null}
+                    {order.status === "CANCELLED" ? (
+                      <p className="mt-4 text-sm text-muted-foreground">
+                        This order was cancelled by you before the restaurant
+                        accepted it.
+                      </p>
+                    ) : null}
+                  </section>
+
+                  <section className="rounded-xl border border-border bg-card p-6">
+                    <h2 className="text-lg font-semibold tracking-tight text-foreground">
                       Delivery details
                     </h2>
                     <dl className="mt-4 space-y-3 text-sm">
@@ -199,6 +220,22 @@ export default function OrderDetailsPage() {
                           {order.contactPhone}
                         </dd>
                       </div>
+                      {order.deliveryDate ? (
+                        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                          <dt className="text-muted-foreground">Delivery date</dt>
+                          <dd className="font-medium text-foreground">
+                            {order.deliveryDate}
+                          </dd>
+                        </div>
+                      ) : null}
+                      {order.customerMessage ? (
+                        <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
+                          <dt className="text-muted-foreground">Message</dt>
+                          <dd className="font-medium text-foreground sm:text-right">
+                            {order.customerMessage}
+                          </dd>
+                        </div>
+                      ) : null}
                       <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                         <dt className="text-muted-foreground">Restaurant</dt>
                         <dd className="font-medium text-foreground">

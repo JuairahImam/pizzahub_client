@@ -29,6 +29,7 @@ function MenuPageContent() {
   const [searchInput, setSearchInput] = useState(
     searchParams.get("q") ?? ""
   )
+  const [location, setLocation] = useState(searchParams.get("location") ?? "")
   const [search, setSearch] = useState(searchParams.get("q") ?? "")
   const [category, setCategory] = useState(searchParams.get("category") ?? "")
   const [minPrice, setMinPrice] = useState(searchParams.get("minPrice") ?? "")
@@ -54,7 +55,7 @@ function MenuPageContent() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setPage(1)
-  }, [search, category, minPrice, maxPrice, sort])
+  }, [search, category, minPrice, maxPrice, sort, location])
 
   // Keep the URL in sync with the active filters.
   useEffect(() => {
@@ -63,6 +64,7 @@ function MenuPageContent() {
     if (category) params.set("category", category)
     if (minPrice) params.set("minPrice", minPrice)
     if (maxPrice) params.set("maxPrice", maxPrice)
+    if (location) params.set("location", location)
     if (sort && sort !== "newest") params.set("sort", sort)
     if (page > 1) params.set("page", String(page))
 
@@ -70,7 +72,7 @@ function MenuPageContent() {
     router.replace(query ? `${pathname}?${query}` : pathname, {
       scroll: false,
     })
-  }, [search, category, minPrice, maxPrice, sort, page, pathname, router])
+  }, [search, category, minPrice, maxPrice, sort, location, page, pathname, router])
 
   // Load categories once.
   useEffect(() => {
@@ -108,6 +110,7 @@ function MenuPageContent() {
         category: category || undefined,
         minPrice: minPriceValue,
         maxPrice: maxPriceValue,
+        location: location || undefined,
         sort,
         page,
         limit: 12,
@@ -122,7 +125,7 @@ function MenuPageContent() {
     } finally {
       setLoading(false)
     }
-  }, [search, category, minPrice, maxPrice, sort, page])
+  }, [search, category, minPrice, maxPrice, sort, location, page])
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -154,6 +157,8 @@ function MenuPageContent() {
         <PageContainer className="py-10 sm:py-12 lg:py-16">
           <div className="space-y-8">
             <MenuFilters
+              location={location}
+              onLocationChange={setLocation}
               search={searchInput}
               onSearchChange={setSearchInput}
               categories={categories}

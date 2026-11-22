@@ -9,6 +9,7 @@ import { Price } from "@/components/price"
 import { ProtectedRoute } from "@/components/protected-route"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/hooks/use-auth"
+import { useToastContext } from "@/lib/toast/context"
 import { useCart } from "@/hooks/use-cart"
 import { ApiError, apiPost } from "@/lib/api/client"
 import { cn } from "@/lib/utils"
@@ -24,6 +25,7 @@ function validatePhone(value: string) {
 export default function CheckoutPage() {
   const router = useRouter()
   const { accessToken } = useAuth()
+  const toast = useToastContext()
   const { items, subtotal, clearCart, isLoaded } = useCart()
 
   const [address, setAddress] = useState("")
@@ -106,6 +108,7 @@ export default function CheckoutPage() {
       }
 
       clearCart()
+      toast.success("Order placed! We'll prepare your pizza.")
       router.push(`/orders/${response.order._id}`)
     } catch (err) {
       if (err instanceof ApiError) {
@@ -121,6 +124,7 @@ export default function CheckoutPage() {
         }
 
         setError(err.message)
+        toast.error(err.message)
       } else {
         setError("Failed to create order. Please try again.")
       }

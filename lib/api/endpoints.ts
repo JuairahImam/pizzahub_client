@@ -23,6 +23,7 @@ export const ENDPOINTS = {
     `/api/vendor/orders/${encodeURIComponent(id)}/status`,
   vendorPremiumCheckout: "/api/vendor/premium/checkout",
   profile: "/api/users/profile",
+  profileImage: "/api/users/profile/image",
   adminDashboardOverview: "/api/admin/dashboard/overview",
   adminUsers: "/api/admin/users",
   adminUser: (id: string) => `/api/admin/users/${encodeURIComponent(id)}`,

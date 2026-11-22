@@ -5,6 +5,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useRef, useState } from "react"
 
+import { BarChart } from "@/components/charts"
 import { EmptyState } from "@/components/empty-state"
 import { ErrorState } from "@/components/error-state"
 import { Price } from "@/components/price"
@@ -34,6 +35,13 @@ function StatCard({ label, value }: { label: string; value: React.ReactNode }) {
       </p>
     </div>
   )
+}
+
+function toChartBars(record: Record<string, number>) {
+  return Object.entries(record)
+    .filter(([, value]) => Number.isFinite(value))
+    .map(([label, value]) => ({ label, value }))
+    .sort((a, b) => a.label.localeCompare(b.label))
 }
 
 export default function AdminDashboardPage() {
@@ -220,6 +228,76 @@ function AdminDashboardContent() {
                   <StatCard label="Rejected" value={overview.orders.rejected} />
                   <StatCard label="Cancelled" value={overview.orders.cancelled} />
                 </div>
+              </div>
+            </section>
+
+            <section
+              aria-labelledby="admin-analytics-heading"
+              className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3"
+            >
+              <div>
+                <h2 id="admin-analytics-heading" className="sr-only">Admin analytics</h2>
+                <BarChart
+                  data={[
+                    { label: "Customers", value: overview.users.customers },
+                    { label: "Vendors", value: overview.users.vendors },
+                    { label: "Blocked users", value: overview.users.blocked },
+                  ]}
+                  title="Users by type"
+                  description="Live user counts from admin overview."
+                />
+              </div>
+              <div>
+                <BarChart
+                  data={toChartBars({
+                    Pending: overview.menuItems.pending,
+                    Approved: overview.menuItems.approved,
+                    Rejected: overview.menuItems.rejected,
+                    Total: overview.menuItems.total,
+                  })}
+                  title="Menu items by status"
+                  description="Approval status counts from admin overview."
+                />
+              </div>
+              <div>
+                <BarChart
+                  data={toChartBars({
+                    Pending: overview.orders.pending,
+                    Confirmed: overview.orders.confirmed,
+                    Preparing: overview.orders.preparing,
+                    "Out for delivery": overview.orders.outForDelivery,
+                    Delivered: overview.orders.delivered,
+                    Rejected: overview.orders.rejected,
+                    Cancelled: overview.orders.cancelled,
+                  })}
+                  title="Orders by status"
+                  description="Current order status distribution."
+                />
+              </div>
+              <div>
+                <BarChart
+                  data={toChartBars(overview.transactions.byStatus)}
+                  title="Transactions by status"
+                  description={`${overview.transactions.total} transaction records.`}
+                />
+              </div>
+              <div>
+                <BarChart
+                  data={toChartBars(overview.transactions.byType)}
+                  title="Transactions by type"
+                  description="Recorded transaction types."
+                />
+              </div>
+              <div>
+                <StatCard
+                  label="Paid transaction value"
+                  value={<Price value={overview.transactions.paidTotal} />}
+                />
+                <BarChart
+                  data={[{ label: "PAID", value: overview.transactions.paidTotal, color: "bg-green-500 dark:bg-green-400" }]}
+                  title="Paid transaction volume"
+                  description="Value of PAID transaction records."
+                />
               </div>
             </section>
 

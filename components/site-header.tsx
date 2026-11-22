@@ -1,10 +1,13 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import Image from "next/image"
 import { ChevronDown, LogOut, Menu, Moon, Pizza, ShoppingCart, Sun, User, X } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useTheme } from "next-themes"
+
+import { useToastContext } from "@/lib/toast/context"
 
 import { ButtonLink } from "@/components/button-link"
 import { siteNav } from "@/lib/navigation"
@@ -24,6 +27,7 @@ export function SiteHeader() {
   const [signingOut, setSigningOut] = useState(false)
   const userMenuRef = useRef<HTMLDivElement>(null)
   const { resolvedTheme, setTheme } = useTheme()
+  const toast = useToastContext()
 
   useEffect(() => {
     if (!isOpen) return
@@ -70,6 +74,7 @@ export function SiteHeader() {
 
     try {
       await logout()
+      toast.success("You're signed out.")
       setUserMenuOpen(false)
       setIsOpen(false)
       router.push("/")
@@ -155,7 +160,17 @@ export function SiteHeader() {
                     focusRing
                   )}
                 >
-                  <User className="size-4" aria-hidden="true" />
+                  {user.image ? (
+                    <Image
+                      src={user.image}
+                      alt={`${user.name} profile image`}
+                      width={20}
+                      height={20}
+                      className="size-5 shrink-0 rounded-full object-cover"
+                    />
+                  ) : (
+                    <User className="size-4" aria-hidden="true" />
+                  )}
                   <span className="max-w-28 truncate">{user.name}</span>
                   <ChevronDown className="size-4" aria-hidden="true" />
                 </button>

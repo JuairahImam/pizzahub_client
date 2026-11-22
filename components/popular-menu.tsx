@@ -28,7 +28,7 @@ export function PopularMenu() {
         const response = await apiGet<MenuListResponse>(ENDPOINTS.menuItems, {
           sort: "newest",
           page: 1,
-          limit: 4,
+          limit: 6,
         })
 
         if (active) setData(response)

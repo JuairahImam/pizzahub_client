@@ -1,6 +1,6 @@
 "use client"
 
-import { Search } from "lucide-react"
+import { MapPin, Search } from "lucide-react"
 
 import { CategoryChip } from "@/components/category-chip"
 import { cn } from "@/lib/utils"
@@ -8,6 +8,8 @@ import { cn } from "@/lib/utils"
 type SortOption = "newest" | "price_asc" | "price_desc"
 
 type MenuFiltersProps = {
+  location: string
+  onLocationChange: (value: string) => void
   search: string
   onSearchChange: (value: string) => void
   categories: string[]
@@ -26,6 +28,8 @@ const inputClassName =
   "h-11 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50"
 
 export function MenuFilters({
+  location,
+  onLocationChange,
   search,
   onSearchChange,
   categories,
@@ -70,6 +74,21 @@ export function MenuFilters({
             onClick={() => onCategoryChange(item)}
           />
         ))}
+      </div>
+
+      <div className="relative">
+        <MapPin
+          className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+          aria-hidden="true"
+        />
+        <input
+          type="search"
+          value={location}
+          onChange={(event) => onLocationChange(event.target.value)}
+          placeholder="Filter by restaurant location"
+          aria-label="Filter by restaurant location"
+          className={cn(inputClassName, "pl-10")}
+        />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

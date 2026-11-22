@@ -135,3 +135,34 @@
     @apply font-sans;
     }
 }
+
+/* PizzaHub subtle motion */
+@keyframes hero-ease {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes panel-pop {
+  from { opacity: 0; transform: scale(0.985); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.hero-ease { animation: hero-ease 0.9s ease-out both; }
+.panel-ease { animation: slide-up 0.8s ease-out both; }
+.pop-ease { animation: slide-up 0.55s ease-out both; }
+.panel-pop { animation: panel-pop 0.7s ease-out both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-ease,
+  .panel-ease,
+  .pop-ease,
+  .panel-pop {
+    animation: none;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -8,6 +8,7 @@ import { useState } from "react"
 import { AuthCard } from "@/components/auth-card"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/hooks/use-auth"
+import { useToastContext } from "@/lib/toast/context"
 import { cn } from "@/lib/utils"
 
 const inputClassName =
@@ -16,6 +17,7 @@ const inputClassName =
 export default function LoginPage() {
   const router = useRouter()
   const { login } = useAuth()
+  const toast = useToastContext()
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -36,9 +38,11 @@ export default function LoginPage() {
 
     try {
       await login(email.trim(), password)
+      toast.success("You're signed in!")
       router.push("/")
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed. Please try again.")
+      toast.error(err instanceof Error ? err.message : "Login failed. Please try again.")
     } finally {
       setLoading(false)
     }

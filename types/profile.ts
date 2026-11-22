@@ -3,6 +3,7 @@ export type UserProfile = {
   name: string
   email: string
   role: "customer" | "vendor" | "admin"
+  image?: string | null
   createdAt: string
   updatedAt: string
 }

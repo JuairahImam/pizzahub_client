@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google"
 
 import "./globals.css"
 import { SiteChrome } from "@/components/site-chrome"
+import { ToastProvider, Toaster } from "@/components/toast"
 import { ThemeProvider } from "@/components/theme-provider"
 import { AuthProvider } from "@/lib/auth/auth-context"
 import { CartProvider } from "@/lib/cart/cart-context"
@@ -29,7 +30,12 @@ export default function RootLayout({
         <ThemeProvider>
           <AuthProvider>
             <CartProvider>
-              <SiteChrome>{children}</SiteChrome>
+              <ToastProvider>
+                <SiteChrome>
+                  <Toaster />
+                  {children}
+                </SiteChrome>
+              </ToastProvider>
             </CartProvider>
           </AuthProvider>
         </ThemeProvider>

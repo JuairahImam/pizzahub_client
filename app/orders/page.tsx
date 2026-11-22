@@ -12,6 +12,7 @@ import { Price } from "@/components/price"
 import { ProtectedRoute } from "@/components/protected-route"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/hooks/use-auth"
+import { useToastContext } from "@/lib/toast/context"
 import { ApiError, apiGet, apiPatch } from "@/lib/api/client"
 import type { Order } from "@/types/order"
 
@@ -24,6 +25,7 @@ function formatDate(value: string) {
 export default function OrdersPage() {
   const router = useRouter()
   const { loading: authLoading, isAuthenticated, accessToken } = useAuth()
+  const toast = useToastContext()
 
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
@@ -101,6 +103,7 @@ export default function OrdersPage() {
         setReloadToken((value) => value + 1)
       }
 
+      toast.success("Order cancelled.")
       setCancelTarget(null)
     } catch (err) {
       if (err instanceof ApiError) {

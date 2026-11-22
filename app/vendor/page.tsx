@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
+import { BarChart } from "@/components/charts"
 import { EmptyState } from "@/components/empty-state"
 import { ErrorState } from "@/components/error-state"
 import { OrderStatusBadge } from "@/components/order-status-badge"
@@ -44,6 +45,14 @@ function formatDate(value: string) {
 function formatOrderId(value: string) {
   const shortId = value.length > 8 ? value.slice(-8) : value
   return shortId.toUpperCase()
+}
+
+function formatChartDate(value: string) {
+  const date = new Date(value)
+  return Number.isNaN(date.getTime()) ? "Invalid" : date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  })
 }
 
 export default function VendorOverviewPage() {
@@ -151,6 +160,30 @@ function VendorOverviewContent() {
     0
   )
 
+  const statusDistribution = STATUS_ORDER.filter((status) => {
+    const count = orders.filter((order) => order.status === status).length
+    return count > 0
+  }).map((status) => ({ label: status, value: statusCounts.find(({ status: s }) => s === status)?.count ?? 0 }))
+
+  const deliveredTrendMap = new Map<string, number>()
+
+  orders
+    .filter((order) => order.status === "DELIVERED")
+    .forEach((order) => {
+      const date = new Date(order.createdAt)
+      if (Number.isNaN(date.getTime())) return
+      const key = date.toISOString().slice(0, 10)
+      deliveredTrendMap.set(key, (deliveredTrendMap.get(key) ?? 0) + (order.totalAmount ?? 0))
+    })
+
+  const deliveredTrend = [...deliveredTrendMap.entries()]
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([key, value]) => ({
+      label: formatChartDate(key),
+      value,
+      color: "bg-green-500 dark:bg-green-400",
+    }))
+
   return (
     <div className="space-y-6 sm:space-y-8">
       <header>
@@ -232,6 +265,24 @@ function VendorOverviewContent() {
               hint="Delivered orders only"
             />
           </section>
+
+          <div aria-labelledby="vendor-analytics-heading" className="grid gap-4 lg:grid-cols-2">
+            <div>
+              <h2 id="vendor-analytics-heading" className="sr-only">Vendor analytics</h2>
+              <BarChart
+                data={statusDistribution}
+                title="Orders by status"
+                description="Current vendor order distribution."
+              />
+            </div>
+            <div>
+              <BarChart
+                data={deliveredTrend}
+                title="Delivered revenue trend"
+                description="Daily total revenue from delivered orders."
+              />
+            </div>
+          </div>
 
           <section
             aria-labelledby="order-status-heading"

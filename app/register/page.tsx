@@ -8,6 +8,7 @@ import { useState } from "react"
 import { AuthCard } from "@/components/auth-card"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/hooks/use-auth"
+import { useToastContext } from "@/lib/toast/context"
 import { cn } from "@/lib/utils"
 
 const inputClassName =
@@ -20,6 +21,7 @@ function isValidEmail(value: string) {
 export default function RegisterPage() {
   const router = useRouter()
   const { register } = useAuth()
+  const toast = useToastContext()
 
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
@@ -57,9 +59,11 @@ export default function RegisterPage() {
 
     try {
       await register(name.trim(), email.trim(), password)
+      toast.success("Welcome to PizzaHub!")
       router.push("/")
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed. Please try again.")
+      toast.error(err instanceof Error ? err.message : "Registration failed. Please try again.")
     } finally {
       setLoading(false)
     }

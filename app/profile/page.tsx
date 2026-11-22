@@ -6,6 +6,7 @@ import { EmptyState } from "@/components/empty-state"
 import { ErrorState } from "@/components/error-state"
 import { ProtectedRoute } from "@/components/protected-route"
 import { ProfileForm } from "@/components/profile/profile-form"
+import { ProfileImageUploader } from "@/components/profile/profile-image-uploader"
 import { PasswordForm } from "@/components/profile/password-form"
 import { useAuth } from "@/hooks/use-auth"
 import { ApiError, apiGet, apiPatch } from "@/lib/api/client"
@@ -156,6 +157,16 @@ function CustomerProfileContent() {
             </p>
             <div className="mt-6">
               <ProfileForm initialValues={profile} onSubmit={handleUpdate} />
+            </div>
+            <div className="mt-6">
+              <ProfileImageUploader
+                initialImage={profile.image ?? null}
+                onImageUploaded={(imageUrl) => {
+                  setProfile((current) =>
+                    current ? { ...current, image: imageUrl || null } : current
+                  )
+                }}
+              />
             </div>
           </section>
 

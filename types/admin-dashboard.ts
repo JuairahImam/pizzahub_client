@@ -24,6 +24,12 @@ export type AdminDashboardOverview = {
       cancelled: number
       deliveredOrderValue: number
     }
+    transactions: {
+      total: number
+      paidTotal: number
+      byStatus: Record<string, number>
+      byType: Record<string, number>
+    }
     recentOrders: Array<{
       id: string
       customerName: string

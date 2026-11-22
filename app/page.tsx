@@ -73,7 +73,7 @@ export default function HomePage() {
           id="home"
           aria-labelledby="hero-heading"
           tabIndex={-1}
-          className="scroll-mt-24 outline-none"
+          className="hero-ease scroll-mt-24 outline-none"
         >
           <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 pt-12 pb-16 sm:px-6 sm:pt-16 sm:pb-20 lg:grid-cols-2 lg:gap-16 lg:px-8 lg:pt-20 lg:pb-24">
             <div className="max-w-xl">
@@ -167,7 +167,7 @@ export default function HomePage() {
           id="categories"
           aria-labelledby="categories-heading"
           tabIndex={-1}
-          className="scroll-mt-24 border-y border-border bg-background outline-none"
+          className="panel-ease scroll-mt-24 border-y border-border bg-background outline-none"
         >
           <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
             <SectionHeading
@@ -225,7 +225,7 @@ export default function HomePage() {
           id="menu"
           aria-labelledby="menu-heading"
           tabIndex={-1}
-          className="scroll-mt-24 border-y border-border bg-background outline-none"
+          className="panel-ease scroll-mt-24 border-y border-border bg-background outline-none"
         >
           <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
             <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
@@ -257,7 +257,7 @@ export default function HomePage() {
           id="how-it-works"
           aria-labelledby="how-heading"
           tabIndex={-1}
-          className="scroll-mt-24 border-y border-border bg-secondary outline-none"
+          className="panel-ease scroll-mt-24 border-y border-border bg-secondary outline-none"
         >
           <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
             <SectionHeading
@@ -311,7 +311,7 @@ export default function HomePage() {
           id="about"
           aria-labelledby="about-heading"
           tabIndex={-1}
-          className="scroll-mt-24 border-b border-border bg-secondary outline-none"
+          className="panel-ease scroll-mt-24 border-b border-border bg-secondary outline-none"
         >
           <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16 lg:px-8 lg:py-24">
             <div>
