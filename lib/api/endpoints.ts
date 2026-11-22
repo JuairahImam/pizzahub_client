@@ -13,6 +13,7 @@ export const ENDPOINTS = {
     `/api/admin/menu-items/${encodeURIComponent(id)}/approve`,
   adminRejectMenuItem: (id: string) =>
     `/api/admin/menu-items/${encodeURIComponent(id)}/reject`,
+  ordersMy: "/api/orders/my",
   vendorOrders: "/api/vendor/orders",
   vendorOrderAccept: (id: string) =>
     `/api/vendor/orders/${encodeURIComponent(id)}/accept`,

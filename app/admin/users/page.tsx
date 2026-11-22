@@ -12,7 +12,7 @@ import { useAuth } from "@/hooks/use-auth"
 import { ApiError, apiGet, apiPatch } from "@/lib/api/client"
 import { ENDPOINTS } from "@/lib/api/endpoints"
 import { cn } from "@/lib/utils"
-import type { AdminUser, AdminUsersResponse } from "@/types/admin-user"
+import type { AdminUser, AdminUserResponse, AdminUsersResponse } from "@/types/admin-user"
 
 type RoleFilter = "ALL" | "customer" | "vendor" | "admin"
 type StatusFilter = "ALL" | "ACTIVE" | "BLOCKED"
@@ -48,7 +48,8 @@ export default function AdminUsersPage() {
 
 function AdminUsersContent() {
   const router = useRouter()
-  const { loading: authLoading, isAuthenticated, accessToken } = useAuth()
+  const { loading: authLoading, isAuthenticated, accessToken, user: currentUser } = useAuth()
+  const currentUserId = currentUser?.id ?? null
 
   const [roleFilter, setRoleFilter] = useState<RoleFilter>("ALL")
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL")
@@ -59,6 +60,8 @@ function AdminUsersContent() {
 
   const [users, setUsers] = useState<AdminUser[]>([])
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null)
+  const [detailsLoading, setDetailsLoading] = useState(false)
+  const [detailsError, setDetailsError] = useState<string | null>(null)
   const [pagination, setPagination] = useState({
     total: 0,
     page: 1,
@@ -142,6 +145,32 @@ function AdminUsersContent() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     void fetchUsers()
   }, [authLoading, isAuthenticated, accessToken, fetchUsers])
+
+  async function openDetails(targetUser: AdminUser) {
+    if (!accessToken) return
+
+    setSelectedUser(null)
+    setDetailsLoading(true)
+    setDetailsError(null)
+
+    try {
+      const response = await apiGet<AdminUserResponse>(
+        ENDPOINTS.adminUser(targetUser.id),
+        undefined,
+        accessToken
+      )
+
+      setSelectedUser(response.user)
+    } catch (error) {
+      setDetailsError(
+        error instanceof ApiError
+          ? error.message
+          : "Failed to load user details."
+      )
+    } finally {
+      setDetailsLoading(false)
+    }
+  }
 
   async function handleBlockUnblock() {
     if (!accessToken || !actionUser || !actionType || actionLoading) return
@@ -345,29 +374,44 @@ function AdminUsersContent() {
                         {formatDate(user.createdAt)}
                       </td>
                       <td className="px-4 py-3 text-right">
-                        <Button
-                          type="button"
-                          variant={user.isBlocked ? "default" : "destructive"}
-                          size="sm"
-                          onClick={() => {
-                            setActionUser(user)
-                            setActionType(user.isBlocked ? "unblock" : "block")
-                            setActionError(null)
-                          }}
-                          className="h-9 rounded-[8px] px-3"
-                        >
-                          {user.isBlocked ? (
-                            <>
-                              <UserCheck className="size-4" aria-hidden />
-                              Unblock
-                            </>
-                          ) : (
-                            <>
-                              <UserX className="size-4" aria-hidden />
-                              Block
-                            </>
-                          )}
-                        </Button>
+                        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => void openDetails(user)}
+                            className="h-9 rounded-[8px] px-3"
+                          >
+                            Details
+                          </Button>
+                          <Button
+                            type="button"
+                            variant={user.isBlocked ? "default" : "destructive"}
+                            size="sm"
+                            onClick={() => {
+                              setActionUser(user)
+                              setActionType(user.isBlocked ? "unblock" : "block")
+                              setActionError(null)
+                            }}
+                            disabled={
+                              user.role === "admin" ||
+                              (!user.isBlocked && user.id === currentUserId)
+                            }
+                            className="h-9 rounded-[8px] px-3"
+                          >
+                            {user.isBlocked ? (
+                              <>
+                                <UserCheck className="size-4" aria-hidden />
+                                Unblock
+                              </>
+                            ) : (
+                              <>
+                                <UserX className="size-4" aria-hidden />
+                                Block
+                              </>
+                            )}
+                          </Button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -433,12 +477,25 @@ function AdminUsersContent() {
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => setSelectedUser(null)}
+                  onClick={() => {
+                    setSelectedUser(null)
+                    setDetailsError(null)
+                  }}
                   className="h-9 rounded-[8px] px-3"
                 >
                   Close
                 </Button>
               </div>
+
+              {detailsLoading ? (
+                <p className="mt-3 text-sm text-muted-foreground">Loading details...</p>
+              ) : null}
+
+              {detailsError ? (
+                <p role="alert" className="mt-3 text-sm text-destructive">
+                  {detailsError}
+                </p>
+              ) : null}
 
               <dl className="mt-5 grid gap-3 text-sm">
                 <div className="flex justify-between gap-3">
