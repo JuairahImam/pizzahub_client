@@ -27,6 +27,8 @@ export type Order = {
   totalAmount: number
   deliveryAddress: string
   contactPhone: string
+  deliveryDate: string | null
+  customerMessage: string | null
   status: OrderStatus
   rejectionReason: string | null
   createdAt: string
@@ -42,6 +44,8 @@ export type CreateOrderInput = {
   items: CreateOrderItemInput[]
   deliveryAddress: string
   contactPhone: string
+  deliveryDate: string
+  customerMessage?: string | null
 }
 
 export type CreateOrderResponse = {

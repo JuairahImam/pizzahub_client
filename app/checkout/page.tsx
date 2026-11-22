@@ -28,6 +28,8 @@ export default function CheckoutPage() {
 
   const [address, setAddress] = useState("")
   const [phone, setPhone] = useState("")
+  const [deliveryDate, setDeliveryDate] = useState("")
+  const [customerMessage, setCustomerMessage] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
@@ -45,6 +47,17 @@ export default function CheckoutPage() {
       ? "Please provide a valid contact phone number (7–20 characters)."
       : null
 
+  const deliveryDateError =
+    deliveryDate.trim().length > 0 &&
+    Number.isNaN(new Date(deliveryDate).getTime())
+      ? "Please provide a valid delivery date."
+      : null
+
+  const customerMessageError =
+    customerMessage.trim().length > 500
+      ? "Customer message must be 500 characters or fewer."
+      : null
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setError(null)
@@ -56,6 +69,16 @@ export default function CheckoutPage() {
 
     if (!validatePhone(trimmedPhone)) {
       setError("Please provide a valid contact phone number.")
+      return
+    }
+
+    if (!deliveryDate.trim() || Number.isNaN(new Date(deliveryDate).getTime())) {
+      setError("Please provide a valid delivery date.")
+      return
+    }
+
+    if (customerMessage.trim().length > 500) {
+      setError("Customer message must be 500 characters or fewer.")
       return
     }
 
@@ -71,6 +94,8 @@ export default function CheckoutPage() {
           })),
           deliveryAddress: trimmedAddress,
           contactPhone: trimmedPhone,
+          deliveryDate: deliveryDate.trim(),
+          customerMessage: customerMessage.trim() || null,
         },
         accessToken
       )
@@ -171,6 +196,46 @@ export default function CheckoutPage() {
                     />
                     {phoneError ? (
                       <p className="text-xs text-destructive">{phoneError}</p>
+                    ) : null}
+                  </div>
+
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="delivery-date"
+                      className="text-sm font-medium text-foreground"
+                    >
+                      Delivery date
+                    </label>
+                    <input
+                      id="delivery-date"
+                      type="date"
+                      required
+                      value={deliveryDate}
+                      onChange={(event) => setDeliveryDate(event.target.value)}
+                      className={inputClassName}
+                    />
+                    {deliveryDateError ? (
+                      <p className="text-xs text-destructive">{deliveryDateError}</p>
+                    ) : null}
+                  </div>
+
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="customer-message"
+                      className="text-sm font-medium text-foreground"
+                    >
+                      Message (optional)
+                    </label>
+                    <textarea
+                      id="customer-message"
+                      rows={3}
+                      value={customerMessage}
+                      onChange={(event) => setCustomerMessage(event.target.value)}
+                      placeholder="Add a note for the restaurant"
+                      className={cn(inputClassName, "h-auto py-3")}
+                    />
+                    {customerMessageError ? (
+                      <p className="text-xs text-destructive">{customerMessageError}</p>
                     ) : null}
                   </div>
 

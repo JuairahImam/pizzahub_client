@@ -516,6 +516,26 @@ function VendorOrdersContent() {
                           {order.contactPhone}
                         </p>
                       </div>
+                      {order.deliveryDate ? (
+                        <div>
+                          <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                            Delivery date
+                          </p>
+                          <p className="mt-1 leading-relaxed text-foreground">
+                            {order.deliveryDate}
+                          </p>
+                        </div>
+                      ) : null}
+                      {order.customerMessage ? (
+                        <div className="md:col-span-2">
+                          <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                            Customer message
+                          </p>
+                          <p className="mt-1 leading-relaxed text-foreground">
+                            {order.customerMessage}
+                          </p>
+                        </div>
+                      ) : null}
                       <div className="md:col-span-2">
                         <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
                           Items
@@ -623,6 +643,22 @@ function VendorOrdersContent() {
                   </dt>
                   <dd className="mt-1 text-foreground">{selectedOrder.contactPhone}</dd>
                 </div>
+                {selectedOrder.deliveryDate ? (
+                  <div>
+                    <dt className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                      Delivery date
+                    </dt>
+                    <dd className="mt-1 text-foreground">{selectedOrder.deliveryDate}</dd>
+                  </div>
+                ) : null}
+                {selectedOrder.customerMessage ? (
+                  <div>
+                    <dt className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                      Customer message
+                    </dt>
+                    <dd className="mt-1 text-foreground">{selectedOrder.customerMessage}</dd>
+                  </div>
+                ) : null}
                 <div>
                   <dt className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
                     Items
