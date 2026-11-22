@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Link from "next/link"
 import Image from "next/image"
 import {
   ArrowRight,
@@ -234,7 +235,7 @@ export default function HomePage() {
                 title="Popular right now"
                 description="A few favorites from our kitchen, updated from the live menu."
               />
-              <a
+              <Link
                 href="/menu"
                 className={cn(
                   "inline-flex shrink-0 items-center gap-2 rounded-sm py-1 text-sm font-medium text-primary hover:text-primary-hover",
@@ -243,7 +244,7 @@ export default function HomePage() {
               >
                 View full menu
                 <ArrowRight className="size-4" aria-hidden="true" />
-              </a>
+              </Link>
             </div>
 
             <div className="mt-10">

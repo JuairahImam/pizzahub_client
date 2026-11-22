@@ -1,7 +1,8 @@
 "use client"
 
 import Image from "next/image"
-import { Plus } from "lucide-react"
+import Link from "next/link"
+import { ArrowRight, Plus } from "lucide-react"
 import { useState } from "react"
 
 import { Price } from "@/components/price"
@@ -97,6 +98,16 @@ export function MenuItemCard({
             {restaurantName}
           </p>
         ) : null}
+
+        <div className="mt-3">
+          <Link
+            href={`/menu/${id}`}
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary-hover"
+          >
+            View details
+            <ArrowRight className="size-4" aria-hidden="true" />
+          </Link>
+        </div>
 
         <div className="mt-auto flex items-center justify-between gap-3 border-t border-border pt-4">
           <Price value={price} />
