@@ -6,9 +6,8 @@ Repository: `https://github.com/JuairahImam/pizzahub_client.git`
 
 Production API: `https://pizzahub-server-toql.onrender.com`
 
-Live storefront (verified by HTTP checks): `https://pizzahub-client.vercel.app`
+Live storefront (verified by HTTP checks): `https://pizzahubclient.vercel.app`
 
-> Note: Direct client route refresh was verified for public pages such as `/` and `/menu`. Some client-side private routes returned 404 in the deployed build as of this audit; this is documented rather than assumed to be healthy.
 
 ## Features
 
