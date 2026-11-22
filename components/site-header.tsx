@@ -23,6 +23,12 @@ export function SiteHeader() {
   const { user, loading: authLoading, logout } = useAuth()
   const { totalItems } = useCart()
   const [isOpen, setIsOpen] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsMounted(true)
+  }, [])
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [signingOut, setSigningOut] = useState(false)
   const userMenuRef = useRef<HTMLDivElement>(null)
@@ -135,7 +141,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <span className="hidden sm:inline-flex">
+          <span className="hidden lg:inline-flex">
             <ButtonLink
               href="#menu"
               size="lg"
@@ -256,18 +262,30 @@ export function SiteHeader() {
           <button
             type="button"
             onClick={handleToggleTheme}
-            aria-label={`Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`}
-            title={`Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`}
+            aria-label={
+              isMounted
+                ? `Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`
+                : "Switch to dark mode"
+            }
+            title={
+              isMounted
+                ? `Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`
+                : "Switch to dark mode"
+            }
             className={cn(
               "inline-flex size-11 items-center justify-center rounded-lg border border-border text-foreground transition-colors hover:bg-secondary",
               focusRing
             )}
           >
-            {resolvedTheme === "dark" ? (
-              <Sun className="size-5" aria-hidden="true" />
-            ) : (
-              <Moon className="size-5" aria-hidden="true" />
-            )}
+            {isMounted
+              ? resolvedTheme === "dark"
+                ? (
+                    <Sun className="size-5" aria-hidden="true" />
+                  )
+                : (
+                    <Moon className="size-5" aria-hidden="true" />
+                  )
+              : null}
           </button>
 
           <a

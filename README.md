@@ -71,9 +71,22 @@ Use `npm run typecheck`, `npm run lint`, and `npm run format` as needed.
 
 Set these in the hosting provider, not in commits:
 
-- `NEXT_PUBLIC_API_URL` — public frontend API base URL, e.g. `https://pizzahub-server-toql.onrender.com`
-  - Default locally: `http://localhost:5001`
+- `NEXT_PUBLIC_API_URL` — public frontend API base URL
+  - Local development (`.env.local` or the in-code fallback): `http://localhost:5001`
+  - Production (Vercel build-time value): `https://pizzahub-server-toql.onrender.com`
   - It is public configuration; private secrets must not use this variable.
+
+### Vercel configuration (required for the live site)
+
+`NEXT_PUBLIC_API_URL` is inlined into the browser bundle at **build time**, so it must be set in the Vercel project that deploys this repository before the build runs:
+
+1. Vercel dashboard → the project for `pizzahub-client` (the deployment serving `https://pizzahubclient.vercel.app`) → **Settings → Environment Variables**.
+2. Add/ edit variable name `NEXT_PUBLIC_API_URL` with value `https://pizzahub-server-toql.onrender.com`.
+3. Select all scopes: **Production**, **Preview**, and **Development**.
+4. Save, then trigger a **new deployment** (Redeploy the latest deployment or push a commit). Changing an environment variable alone does not rebuild an existing deployment.
+5. Verify the new deployment's browser Network tab has no request to `localhost:5001` and that homepage/menu data loads from `https://pizzahub-server-toql.onrender.com`.
+
+The production build now fails fast if `NEXT_PUBLIC_API_URL` is missing on Vercel, preventing a silent fallback to the local API.
 
 There are no other required client environment variables in the current source.
 
