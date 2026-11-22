@@ -161,3 +161,85 @@ export async function apiPost<T>(
 
   return data as T
 }
+
+export async function apiDelete<T>(
+  path: string,
+  token?: string | null
+): Promise<T> {
+  const resolvedToken = token ?? (authTokenGetter ? authTokenGetter() : null)
+
+  let response: Response
+
+  try {
+    response = await fetch(buildUrl(path), {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        ...(resolvedToken ? { Authorization: `Bearer ${resolvedToken}` } : {}),
+      },
+      cache: "no-store",
+    })
+  } catch {
+    throw new ApiError("Network error. Please check your connection.", 0)
+  }
+
+  let data: unknown = null
+
+  try {
+    data = await response.json()
+  } catch {
+    data = null
+  }
+
+  if (!response.ok) {
+    const message =
+      (data as { message?: string } | null)?.message ??
+      `Request failed with status ${response.status}`
+
+    throw new ApiError(message, response.status)
+  }
+
+  return data as T
+}
+
+export async function apiUpload<T>(
+  path: string,
+  formData: FormData,
+  token?: string | null
+): Promise<T> {
+  const resolvedToken = token ?? (authTokenGetter ? authTokenGetter() : null)
+
+  let response: Response
+
+  try {
+    response = await fetch(buildUrl(path), {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        ...(resolvedToken ? { Authorization: `Bearer ${resolvedToken}` } : {}),
+      },
+      body: formData,
+      cache: "no-store",
+    })
+  } catch {
+    throw new ApiError("Network error. Please check your connection.", 0)
+  }
+
+  let data: unknown = null
+
+  try {
+    data = await response.json()
+  } catch {
+    data = null
+  }
+
+  if (!response.ok) {
+    const message =
+      (data as { message?: string } | null)?.message ??
+      `Request failed with status ${response.status}`
+
+    throw new ApiError(message, response.status)
+  }
+
+  return data as T
+}

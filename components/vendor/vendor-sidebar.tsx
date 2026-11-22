@@ -39,7 +39,7 @@ const NAV_ITEMS: NavItem[] = [
     label: "Menu",
     href: "/vendor/menu",
     icon: UtensilsCrossed,
-    enabled: false,
+    enabled: true,
   },
   { label: "Orders", href: "/vendor/orders", icon: Package, enabled: false },
   {
