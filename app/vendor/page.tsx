@@ -9,7 +9,7 @@ import { ErrorState } from "@/components/error-state"
 import { OrderStatusBadge } from "@/components/order-status-badge"
 import { Price } from "@/components/price"
 import { ProtectedRoute } from "@/components/protected-route"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 import { useAuth } from "@/hooks/use-auth"
 import { ApiError, apiGet } from "@/lib/api/client"
 import { cn } from "@/lib/utils"
@@ -287,15 +287,15 @@ function VendorOverviewContent() {
                 <span className="text-xs text-muted-foreground">
                   Order management is coming soon.
                 </span>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  disabled
-                  className="h-9 rounded-[10px] px-3"
+                <Link
+                  href="/vendor/orders"
+                  className={cn(
+                    buttonVariants({ variant: "outline", size: "sm" }),
+                    "h-9 rounded-[10px] px-3"
+                  )}
                 >
                   View all orders
-                </Button>
+                </Link>
               </div>
             </div>
 

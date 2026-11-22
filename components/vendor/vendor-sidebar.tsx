@@ -41,7 +41,7 @@ const NAV_ITEMS: NavItem[] = [
     icon: UtensilsCrossed,
     enabled: true,
   },
-  { label: "Orders", href: "/vendor/orders", icon: Package, enabled: false },
+  { label: "Orders", href: "/vendor/orders", icon: Package, enabled: true },
   {
     label: "Premium",
     href: "/vendor/premium",
