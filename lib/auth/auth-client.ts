@@ -10,6 +10,7 @@ export type AuthUser = {
   isBlocked: boolean
   isPremium: boolean
   subscriptionStatus: string
+  premiumExpiresAt: string | null
   createdAt: string
   updatedAt: string
 }

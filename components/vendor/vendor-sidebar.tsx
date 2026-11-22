@@ -46,7 +46,7 @@ const NAV_ITEMS: NavItem[] = [
     label: "Premium",
     href: "/vendor/premium",
     icon: CreditCard,
-    enabled: false,
+    enabled: true,
   },
 ]
 

@@ -20,4 +20,5 @@ export const ENDPOINTS = {
     `/api/vendor/orders/${encodeURIComponent(id)}/reject`,
   vendorOrderStatus: (id: string) =>
     `/api/vendor/orders/${encodeURIComponent(id)}/status`,
+  vendorPremiumCheckout: "/api/vendor/premium/checkout",
 } as const
