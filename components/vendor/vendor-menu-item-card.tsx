@@ -7,7 +7,7 @@ import { useState } from "react"
 import { Price } from "@/components/price"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import type { VendorMenuItem } from "@/types/vendor-menu"
+import type { VendorMenuItem, VendorMenuApprovalStatus } from "@/types/vendor-menu"
 
 const FALLBACK_IMAGE = "/images/hero-pizza.jpg"
 
@@ -24,6 +24,24 @@ type VendorMenuItemCardProps = {
   item: VendorMenuItem
   onEdit: (item: VendorMenuItem) => void
   onDelete: (id: string) => Promise<void>
+}
+
+function getApprovalBadgeLabel(status: VendorMenuApprovalStatus) {
+  if (status === "APPROVED") return "Approved"
+  if (status === "REJECTED") return "Rejected"
+  return "Pending Review"
+}
+
+function getApprovalBadgeClassName(status: VendorMenuApprovalStatus) {
+  if (status === "APPROVED") {
+    return "bg-green-100 text-green-800 dark:bg-green-950/60 dark:text-green-200"
+  }
+
+  if (status === "REJECTED") {
+    return "bg-red-100 text-red-800 dark:bg-red-950/60 dark:text-red-200"
+  }
+
+  return "bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-200"
 }
 
 export function VendorMenuItemCard({
@@ -89,6 +107,37 @@ export function VendorMenuItemCard({
             {item.description}
           </p>
         </div>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <span
+            className={cn(
+              "rounded-full px-2.5 py-1 text-xs font-medium",
+              getApprovalBadgeClassName(item.approvalStatus)
+            )}
+          >
+            {getApprovalBadgeLabel(item.approvalStatus)}
+          </span>
+        </div>
+
+        {item.approvalStatus === "PENDING" ? (
+          <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-900 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-100">
+            Awaiting admin approval. This item is not publicly visible yet.
+          </p>
+        ) : null}
+
+        {item.approvalStatus === "REJECTED" ? (
+          <div
+            role="alert"
+            className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-900 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-100"
+          >
+            <p className="font-medium">Rejected by admin</p>
+            <p className="mt-1 leading-relaxed">
+              {item.rejectionReason?.trim()
+                ? item.rejectionReason
+                : "No rejection reason was provided."}
+            </p>
+          </div>
+        ) : null}
 
         <div className="flex items-center justify-between gap-3 border-t border-border pt-4">
           <Price value={item.price} />

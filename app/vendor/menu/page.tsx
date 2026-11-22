@@ -287,7 +287,13 @@ function VendorMenuContent() {
       )
       setFormMode(null)
       setEditingItem(null)
-      setNotice(response.message || "Menu item updated successfully.")
+
+      const updateNotice =
+        response.menuItem.approvalStatus === "PENDING"
+          ? "Menu item updated successfully. Content changes require admin re-approval."
+          : response.message || "Menu item updated successfully."
+
+      setNotice(updateNotice)
       return null
     } catch (error) {
       return getMutationErrorMessage(error, "Failed to update menu item.")

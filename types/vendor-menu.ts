@@ -1,3 +1,5 @@
+export type VendorMenuApprovalStatus = "PENDING" | "APPROVED" | "REJECTED"
+
 export type VendorMenuItem = {
   _id: string
   vendorId: string
@@ -9,6 +11,10 @@ export type VendorMenuItem = {
   imageUrl: string
   imageId: string
   isAvailable: boolean
+  approvalStatus: VendorMenuApprovalStatus
+  rejectionReason: string | null
+  reviewedAt: string | null
+  reviewedBy: string | null
   createdAt: string
   updatedAt: string
 }
