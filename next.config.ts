@@ -1,12 +1,12 @@
 import type { NextConfig } from "next"
 
-// NEXT_PUBLIC_* values are inlined at build time. A missing value on Vercel
-// silently baked the local fallback into the deployed bundle, so fail the
-// production build instead of shipping a frontend that calls localhost.
+// NEXT_PUBLIC_* values are inlined at build time. If a Vercel build has no
+// configured value, fall back to the production API so the bundle never
+// contains the local development URL. Setting NEXT_PUBLIC_API_URL in Vercel
+// remains the preferred way to configure the production API base URL.
 if (process.env.VERCEL === "1" && !process.env.NEXT_PUBLIC_API_URL) {
-  throw new Error(
-    "NEXT_PUBLIC_API_URL must be configured in the Vercel project before building."
-  )
+  process.env.NEXT_PUBLIC_API_URL =
+    "https://pizzahub-server-toql.onrender.com"
 }
 
 const nextConfig: NextConfig = {
