@@ -9,6 +9,7 @@ const ADMIN_NAV = [
   { label: "Overview", href: "/admin" },
   { label: "Menu Moderation", href: "/admin/menu" },
   { label: "Manage Users", href: "/admin/users" },
+  { label: "Transactions", href: "/admin/transactions" },
 ]
 
 export function AdminNav() {
