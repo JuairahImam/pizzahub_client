@@ -1,9 +1,10 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { ChevronDown, LogOut, Menu, Pizza, ShoppingCart, User, X } from "lucide-react"
+import { ChevronDown, LogOut, Menu, Moon, Pizza, ShoppingCart, Sun, User, X } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { useTheme } from "next-themes"
 
 import { ButtonLink } from "@/components/button-link"
 import { siteNav } from "@/lib/navigation"
@@ -22,6 +23,7 @@ export function SiteHeader() {
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [signingOut, setSigningOut] = useState(false)
   const userMenuRef = useRef<HTMLDivElement>(null)
+  const { resolvedTheme, setTheme } = useTheme()
 
   useEffect(() => {
     if (!isOpen) return
@@ -76,6 +78,10 @@ export function SiteHeader() {
     } finally {
       setSigningOut(false)
     }
+  }
+
+  function handleToggleTheme() {
+    setTheme(resolvedTheme === "dark" ? "light" : "dark")
   }
 
   return (
@@ -218,6 +224,23 @@ export function SiteHeader() {
               </>
             )}
           </div>
+
+          <button
+            type="button"
+            onClick={handleToggleTheme}
+            aria-label={`Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`}
+            title={`Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`}
+            className={cn(
+              "inline-flex size-11 items-center justify-center rounded-lg border border-border text-foreground transition-colors hover:bg-secondary",
+              focusRing
+            )}
+          >
+            {resolvedTheme === "dark" ? (
+              <Sun className="size-5" aria-hidden="true" />
+            ) : (
+              <Moon className="size-5" aria-hidden="true" />
+            )}
+          </button>
 
           <a
             href="/cart"

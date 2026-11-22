@@ -7,6 +7,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { EmptyState } from "@/components/empty-state"
 import { ErrorState } from "@/components/error-state"
 import { OrderStatusBadge } from "@/components/order-status-badge"
+import { OrderProgressTimeline } from "@/components/order-progress-timeline"
 import { Price } from "@/components/price"
 import { ProtectedRoute } from "@/components/protected-route"
 import { Button } from "@/components/ui/button"
@@ -436,6 +437,7 @@ function VendorOrdersContent() {
                             Order #{formatOrderId(order._id)}
                           </p>
                           <OrderStatusBadge status={order.status} />
+                          <OrderProgressTimeline order={order} variant="compact" />
                         </div>
                         <p className="text-sm text-muted-foreground">
                           {order.customerName} · {order.customerEmail}
