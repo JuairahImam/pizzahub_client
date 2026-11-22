@@ -8,6 +8,7 @@ import {
   Menu as MenuIcon,
   Package,
   Pizza,
+  Settings,
   UtensilsCrossed,
   X,
 } from "lucide-react"
@@ -42,6 +43,12 @@ const NAV_ITEMS: NavItem[] = [
     enabled: true,
   },
   { label: "Orders", href: "/vendor/orders", icon: Package, enabled: true },
+  {
+    label: "Profile",
+    href: "/vendor/profile",
+    icon: Settings,
+    enabled: true,
+  },
   {
     label: "Premium",
     href: "/vendor/premium",

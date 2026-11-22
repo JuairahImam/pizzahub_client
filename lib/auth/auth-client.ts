@@ -134,6 +134,17 @@ export async function getToken(): Promise<AuthTokenResponse> {
   return (await response.json()) as AuthTokenResponse
 }
 
+export async function changePassword(
+  currentPassword: string,
+  newPassword: string
+): Promise<void> {
+  await authFetch("/api/auth/change-password", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ currentPassword, newPassword }),
+  })
+}
+
 export function signInWithGoogle(callbackURL = "/"): void {
   const url = new URL("/api/auth/sign-in/social", API_BASE_URL)
   // Better Auth social sign-in is a POST endpoint; use a form-less navigation fallback.

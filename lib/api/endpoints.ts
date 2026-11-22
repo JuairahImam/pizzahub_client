@@ -21,4 +21,5 @@ export const ENDPOINTS = {
   vendorOrderStatus: (id: string) =>
     `/api/vendor/orders/${encodeURIComponent(id)}/status`,
   vendorPremiumCheckout: "/api/vendor/premium/checkout",
+  profile: "/api/users/profile",
 } as const

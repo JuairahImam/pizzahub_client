@@ -170,6 +170,17 @@ export function SiteHeader() {
                     >
                       My Orders
                     </Link>
+                    <Link
+                      href="/profile"
+                      role="menuitem"
+                      onClick={() => setUserMenuOpen(false)}
+                      className={cn(
+                        "flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-secondary",
+                        focusRing
+                      )}
+                    >
+                      Profile Settings
+                    </Link>
                     <button
                       type="button"
                       role="menuitem"
