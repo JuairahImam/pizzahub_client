@@ -10,6 +10,7 @@ export type VendorMenuItem = {
   price: number
   imageUrl: string
   imageId: string
+  images?: string[]
   isAvailable: boolean
   approvalStatus: VendorMenuApprovalStatus
   rejectionReason: string | null
@@ -38,6 +39,7 @@ export type CreateVendorMenuItemInput = {
   price: number
   imageUrl: string
   imageId: string
+  images?: string[]
   isAvailable?: boolean
 }
 

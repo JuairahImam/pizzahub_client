@@ -162,28 +162,37 @@ function VendorMenuContent() {
 
   async function handleCreate(
     values: VendorMenuItemFormValues,
-    imageFile: File | null
+    imageFiles: File[]
   ) {
     if (!accessToken) {
       return "We couldn't verify your session. Please sign in again."
     }
 
-    if (!imageFile) {
-      return "Please select an image to upload."
+    if (imageFiles.length === 0) {
+      return "Please select at least one image to upload."
     }
 
     try {
-      const formData = new FormData()
-      formData.append("image", imageFile)
+      const uploaded: { imageUrl: string; id: string }[] = []
 
-      const uploadResponse = await apiUpload<ImageUploadResponse>(
-        ENDPOINTS.vendorUploadImage,
-        formData,
-        accessToken
-      )
+      for (const file of imageFiles) {
+        const formData = new FormData()
+        formData.append("image", file)
 
-      if (!uploadResponse?.image?.imageUrl || !uploadResponse.image.id) {
-        return "Received an unexpected response from the image upload."
+        const uploadResponse = await apiUpload<ImageUploadResponse>(
+          ENDPOINTS.vendorUploadImage,
+          formData,
+          accessToken
+        )
+
+        if (!uploadResponse?.image?.imageUrl || !uploadResponse.image.id) {
+          return "Received an unexpected response from the image upload."
+        }
+
+        uploaded.push({
+          imageUrl: uploadResponse.image.imageUrl,
+          id: uploadResponse.image.id,
+        })
       }
 
       const payload = {
@@ -191,8 +200,9 @@ function VendorMenuContent() {
         description: values.description,
         category: values.category,
         price: Number(values.price),
-        imageUrl: uploadResponse.image.imageUrl,
-        imageId: uploadResponse.image.id,
+        imageUrl: uploaded[0].imageUrl,
+        imageId: uploaded[0].id,
+        images: uploaded.map((image) => image.imageUrl),
         isAvailable: values.isAvailable,
       }
 
@@ -218,7 +228,7 @@ function VendorMenuContent() {
 
   async function handleUpdate(
     values: VendorMenuItemFormValues,
-    imageFile: File | null
+    imageFiles: File[]
   ) {
     if (!accessToken || !editingItem) {
       return "We couldn't verify your session. Please sign in again."
@@ -248,22 +258,32 @@ function VendorMenuContent() {
     }
 
     try {
-      if (imageFile) {
-        const formData = new FormData()
-        formData.append("image", imageFile)
+      if (imageFiles.length > 0) {
+        const uploaded: { imageUrl: string; id: string }[] = []
 
-        const uploadResponse = await apiUpload<ImageUploadResponse>(
-          ENDPOINTS.vendorUploadImage,
-          formData,
-          accessToken
-        )
+        for (const file of imageFiles) {
+          const formData = new FormData()
+          formData.append("image", file)
 
-        if (!uploadResponse?.image?.imageUrl || !uploadResponse.image.id) {
-          return "Received an unexpected response from the image upload."
+          const uploadResponse = await apiUpload<ImageUploadResponse>(
+            ENDPOINTS.vendorUploadImage,
+            formData,
+            accessToken
+          )
+
+          if (!uploadResponse?.image?.imageUrl || !uploadResponse.image.id) {
+            return "Received an unexpected response from the image upload."
+          }
+
+          uploaded.push({
+            imageUrl: uploadResponse.image.imageUrl,
+            id: uploadResponse.image.id,
+          })
         }
 
-        updates.imageUrl = uploadResponse.image.imageUrl
-        updates.imageId = uploadResponse.image.id
+        updates.imageUrl = uploaded[0].imageUrl
+        updates.imageId = uploaded[0].id
+        updates.images = uploaded.map((image) => image.imageUrl)
       }
 
       if (Object.keys(updates).length === 0) {
@@ -317,7 +337,9 @@ function VendorMenuContent() {
     }
   }
 
-  const formInitialValues: (VendorMenuItemFormValues & { imageUrl?: string }) | undefined =
+  const formInitialValues:
+    | (VendorMenuItemFormValues & { imageUrl?: string; images?: string[] })
+    | undefined =
     editingItem
       ? {
           name: editingItem.name,
@@ -326,6 +348,7 @@ function VendorMenuContent() {
           price: String(editingItem.price),
           isAvailable: editingItem.isAvailable,
           imageUrl: editingItem.imageUrl,
+          images: editingItem.images,
         }
       : undefined
 

@@ -18,8 +18,8 @@ type FormValues = {
 
 type MenuItemFormProps = {
   mode: FormMode
-  initialValues?: FormValues & { imageUrl?: string }
-  onSubmit: (values: FormValues, imageFile: File | null) => Promise<string | null>
+  initialValues?: FormValues & { imageUrl?: string; images?: string[] }
+  onSubmit: (values: FormValues, imageFiles: File[]) => Promise<string | null>
   onCancel: () => void
 }
 
@@ -79,9 +79,13 @@ export function MenuItemForm({
         }
       : EMPTY_VALUES
   )
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(
-    initialValues?.imageUrl ?? null
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([])
+  const [previewUrls, setPreviewUrls] = useState<string[]>(
+    initialValues?.images?.length
+      ? initialValues.images
+      : initialValues?.imageUrl
+        ? [initialValues.imageUrl]
+        : []
   )
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [formError, setFormError] = useState<string | null>(null)
@@ -97,7 +101,7 @@ export function MenuItemForm({
     values.category.trim() !== (initialValues.category ?? "").trim() ||
     values.price.trim() !== (initialValues.price ?? "").trim() ||
     values.isAvailable !== (initialValues.isAvailable ?? true) ||
-    selectedFile !== null
+    selectedFiles.length > 0
 
   function updateField(field: FieldName, value: string | boolean) {
     setValues((current) => ({ ...current, [field]: value }))
@@ -112,8 +116,14 @@ export function MenuItemForm({
     if (formError) setFormError(null)
   }
 
+  function releasePreviewUrls(urls: string[]) {
+    urls.forEach((url) => {
+      if (url.startsWith("blob:")) URL.revokeObjectURL(url)
+    })
+  }
+
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0] ?? null
+    const files = Array.from(event.target.files ?? [])
 
     setFieldErrors((current) => {
       if (!current.image) return current
@@ -122,48 +132,52 @@ export function MenuItemForm({
       return next
     })
 
-    if (!file) {
-      setSelectedFile(null)
-      setPreviewUrl(initialValues?.imageUrl ?? null)
+    if (files.length === 0) {
+      setSelectedFiles([])
+      setPreviewUrls(initialValues?.images ?? [])
       return
     }
 
-    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+    if (files.length > 5) {
+      setFieldErrors((current) => ({
+        ...current,
+        image: "Select up to 5 images.",
+      }))
+      setSelectedFiles([])
+      if (fileInputRef.current) fileInputRef.current.value = ""
+      return
+    }
+
+    if (files.some((file) => !ALLOWED_IMAGE_TYPES.includes(file.type))) {
       setFieldErrors((current) => ({
         ...current,
         image: "Only JPG, JPEG, PNG, and WEBP images are allowed.",
       }))
-      setSelectedFile(null)
+      setSelectedFiles([])
       if (fileInputRef.current) fileInputRef.current.value = ""
       return
     }
 
-    if (file.size > MAX_IMAGE_SIZE) {
+    if (files.some((file) => file.size > MAX_IMAGE_SIZE)) {
       setFieldErrors((current) => ({
         ...current,
-        image: "Image size must not exceed 5 MB.",
+        image: "Each image must not exceed 5 MB.",
       }))
-      setSelectedFile(null)
+      setSelectedFiles([])
       if (fileInputRef.current) fileInputRef.current.value = ""
       return
     }
 
-    if (previewUrl && previewUrl.startsWith("blob:")) {
-      URL.revokeObjectURL(previewUrl)
-    }
-
-    setSelectedFile(file)
-    setPreviewUrl(URL.createObjectURL(file))
+    releasePreviewUrls(previewUrls)
+    setSelectedFiles(files)
+    setPreviewUrls(files.map((file) => URL.createObjectURL(file)))
     if (formError) setFormError(null)
   }
 
   function clearSelectedImage() {
-    if (previewUrl && previewUrl.startsWith("blob:")) {
-      URL.revokeObjectURL(previewUrl)
-    }
-
-    setSelectedFile(null)
-    setPreviewUrl(initialValues?.imageUrl ?? null)
+    releasePreviewUrls(previewUrls)
+    setSelectedFiles([])
+    setPreviewUrls(initialValues?.images ?? [])
 
     if (fileInputRef.current) {
       fileInputRef.current.value = ""
@@ -212,7 +226,7 @@ export function MenuItemForm({
       nextErrors.price = "Price must be a positive number."
     }
 
-    const hasImage = Boolean(selectedFile || initialValues?.imageUrl)
+    const hasImage = selectedFiles.length > 0 || Boolean(initialValues?.imageUrl)
     if (mode === "create" && !hasImage) {
       nextErrors.image = "Please select an image to upload."
     }
@@ -241,7 +255,7 @@ export function MenuItemForm({
           price: values.price.trim(),
           isAvailable: values.isAvailable,
         },
-        selectedFile
+        selectedFiles
       )
 
       if (errorMessage) {
@@ -419,14 +433,14 @@ export function MenuItemForm({
       </div>
 
       <div className="space-y-3">
-        <span className="text-sm font-medium text-foreground">Item image</span>
+        <span className="text-sm font-medium text-foreground">Item images</span>
 
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
           <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-border bg-muted sm:w-48">
-            {previewUrl ? (
+            {previewUrls[0] ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={previewUrl}
+                src={previewUrls[0]}
                 alt="Menu item preview"
                 className="h-full w-full object-cover"
               />
@@ -441,6 +455,7 @@ export function MenuItemForm({
             <input
               ref={fileInputRef}
               type="file"
+              multiple
               accept="image/jpeg,image/png,image/webp"
               onChange={handleFileChange}
               disabled={submitting}
@@ -451,9 +466,12 @@ export function MenuItemForm({
               className="block w-full text-sm text-muted-foreground file:mr-3 file:rounded-lg file:border-0 file:bg-primary file:px-4 file:py-2 file:text-sm file:font-medium file:text-primary-foreground hover:file:bg-primary-hover"
             />
 
-            {selectedFile ? (
+            {selectedFiles.length > 0 ? (
               <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                <span className="truncate">{selectedFile.name}</span>
+                <span className="truncate">
+                  {selectedFiles.length} image
+                  {selectedFiles.length === 1 ? "" : "s"} selected
+                </span>
                 <Button
                   type="button"
                   variant="outline"
@@ -468,8 +486,9 @@ export function MenuItemForm({
             ) : null}
 
             <p className="text-xs leading-relaxed text-muted-foreground">
-              JPG, PNG, or WEBP. Maximum 5 MB. The image is uploaded to ImgBB
-              before the menu item is saved.
+              Up to 5 images. JPG, PNG, or WEBP, maximum 5 MB each. The first
+              image is the cover; all images are uploaded to ImgBB before the
+              menu item is saved.
             </p>
 
             {fieldErrors.image ? (

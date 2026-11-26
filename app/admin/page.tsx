@@ -191,6 +191,10 @@ function AdminDashboardContent() {
                 label="Delivered order value"
                 value={<Price value={overview.orders.deliveredOrderValue} />}
               />
+              <StatCard
+                label="Total transactions"
+                value={overview.transactions.total}
+              />
             </section>
 
             <section className="grid gap-4 lg:grid-cols-2">

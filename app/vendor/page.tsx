@@ -13,8 +13,10 @@ import { ProtectedRoute } from "@/components/protected-route"
 import { buttonVariants } from "@/components/ui/button"
 import { useAuth } from "@/hooks/use-auth"
 import { ApiError, apiGet } from "@/lib/api/client"
+import { ENDPOINTS } from "@/lib/api/endpoints"
 import { cn } from "@/lib/utils"
 import type { Order, OrderStatus, VendorOrdersResponse } from "@/types/order"
+import type { VendorMenuResponse } from "@/types/vendor-menu"
 
 const STATUS_ORDER: OrderStatus[] = [
   "PENDING",
@@ -70,9 +72,12 @@ function VendorOverviewContent() {
     isAuthenticated,
     accessToken,
     refreshSession,
+    user,
   } = useAuth()
 
   const [orders, setOrders] = useState<Order[]>([])
+  const [menuItems, setMenuItems] = useState<number>(0)
+  const [activeMenuItems, setActiveMenuItems] = useState<number>(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [forbidden, setForbidden] = useState(false)
@@ -95,10 +100,26 @@ function VendorOverviewContent() {
     setForbidden(false)
     setForbiddenMessage(null)
 
-    apiGet<VendorOrdersResponse>("/api/vendor/orders", undefined, accessToken)
-      .then((response) => {
+    Promise.all([
+      apiGet<VendorOrdersResponse>("/api/vendor/orders", undefined, accessToken),
+      apiGet<VendorMenuResponse>(
+        ENDPOINTS.vendorMenuItems,
+        undefined,
+        accessToken
+      ).catch(() => null),
+    ])
+      .then(([response, menuResponse]) => {
         if (!active) return
         setOrders(Array.isArray(response?.orders) ? response.orders : [])
+        const items = menuResponse?.menuItems ?? []
+        setMenuItems(items.length)
+        setActiveMenuItems(
+          items.filter(
+            (item) =>
+              item.isAvailable &&
+              item.approvalStatus === "APPROVED"
+          ).length
+        )
       })
       .catch((err) => {
         if (!active) return
@@ -150,8 +171,12 @@ function VendorOverviewContent() {
 
   const pendingOrders =
     statusCounts.find(({ status }) => status === "PENDING")?.count ?? 0
-  const deliveredOrders =
-    statusCounts.find(({ status }) => status === "DELIVERED")?.count ?? 0
+  const acceptedOrders =
+    statusCounts.find(({ status }) => status === "CONFIRMED")?.count ?? 0
+  const currentPlan =
+    user?.isPremium && user.subscriptionStatus === "ACTIVE"
+      ? "Premium"
+      : "Free"
   const revenue = orders.reduce(
     (total, order) =>
       order.status === "DELIVERED" && Number.isFinite(order.totalAmount)
@@ -236,13 +261,18 @@ function VendorOverviewContent() {
       {!loading && !forbidden && !error ? (
         <div className="space-y-6 sm:space-y-8">
           <section
-            aria-label="Order metrics"
-            className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"
+            aria-label="Vendor metrics"
+            className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3"
           >
             <MetricCard
-              label="Total orders"
-              value={String(orders.length)}
-              hint="All orders for your restaurant"
+              label="Total menu items"
+              value={String(menuItems)}
+              hint="All items you've submitted"
+            />
+            <MetricCard
+              label="Active menu items"
+              value={String(activeMenuItems)}
+              hint="Approved and available"
             />
             <MetricCard
               label="Pending orders"
@@ -250,9 +280,14 @@ function VendorOverviewContent() {
               hint="Awaiting your response"
             />
             <MetricCard
-              label="Delivered orders"
-              value={String(deliveredOrders)}
-              hint="Completed orders"
+              label="Accepted orders"
+              value={String(acceptedOrders)}
+              hint="Confirmed orders"
+            />
+            <MetricCard
+              label="Current plan"
+              value={currentPlan}
+              hint="Your subscription"
             />
             <MetricCard
               label="Revenue (delivered)"
