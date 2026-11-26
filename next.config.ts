@@ -1,4 +1,9 @@
+import path from "node:path"
+import { fileURLToPath } from "node:url"
+
 import type { NextConfig } from "next"
+
+const projectRoot = path.dirname(fileURLToPath(import.meta.url))
 
 // NEXT_PUBLIC_* values are inlined at build time. If a Vercel build has no
 // configured value, fall back to the production API so the bundle never
@@ -10,6 +15,10 @@ if (process.env.VERCEL === "1" && !process.env.NEXT_PUBLIC_API_URL) {
 }
 
 const nextConfig: NextConfig = {
+  // Keep Turbopack scoped to this repo even when a parent folder has a lockfile.
+  turbopack: {
+    root: projectRoot,
+  },
   images: {
     dangerouslyAllowSVG: true,
     remotePatterns: [
