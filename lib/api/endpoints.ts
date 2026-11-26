@@ -30,4 +30,13 @@ export const ENDPOINTS = {
   adminTransactions: "/api/admin/transactions",
   adminTransaction: (id: string) =>
     `/api/admin/transactions/${encodeURIComponent(id)}`,
+  vendorRequests: "/api/vendor-requests",
+  vendorRequestMe: "/api/vendor-requests/me",
+  adminVendorRequests: "/api/admin/vendor-requests",
+  adminVendorRequest: (id: string) =>
+    `/api/admin/vendor-requests/${encodeURIComponent(id)}`,
+  adminVendorRequestApprove: (id: string) =>
+    `/api/admin/vendor-requests/${encodeURIComponent(id)}/approve`,
+  adminVendorRequestReject: (id: string) =>
+    `/api/admin/vendor-requests/${encodeURIComponent(id)}/reject`,
 } as const

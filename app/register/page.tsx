@@ -8,6 +8,8 @@ import { useState } from "react"
 import { AuthCard } from "@/components/auth-card"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/hooks/use-auth"
+import { dashboardPathForRole, signInWithGoogle } from "@/lib/auth/auth-client"
+import { getSafeNext } from "@/lib/auth/redirect"
 import { useToastContext } from "@/lib/toast/context"
 import { cn } from "@/lib/utils"
 
@@ -16,6 +18,12 @@ const inputClassName =
 
 function isValidEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+}
+
+function isValidPassword(value: string) {
+  return (
+    value.length >= 6 && /[a-z]/.test(value) && /[A-Z]/.test(value)
+  )
 }
 
 export default function RegisterPage() {
@@ -27,16 +35,20 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
+  const [accountType, setAccountType] = useState<"customer" | "vendor">(
+    "customer"
+  )
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [googleLoading, setGoogleLoading] = useState(false)
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setError(null)
 
     if (!name.trim()) {
-      setError("Please enter your name.")
+      setError("Please enter your full name.")
       return
     }
 
@@ -45,8 +57,10 @@ export default function RegisterPage() {
       return
     }
 
-    if (password.length < 8) {
-      setError("Password must be at least 8 characters.")
+    if (!isValidPassword(password)) {
+      setError(
+        "Password must be at least 6 characters with one uppercase and one lowercase letter."
+      )
       return
     }
 
@@ -58,21 +72,48 @@ export default function RegisterPage() {
     setLoading(true)
 
     try {
-      await register(name.trim(), email.trim(), password)
+      const user = await register(
+        name.trim(),
+        email.trim(),
+        password,
+        accountType
+      )
       toast.success("Welcome to PizzaHub!")
-      router.push("/")
+      router.push(getSafeNext() ?? dashboardPathForRole(user.role))
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Registration failed. Please try again.")
-      toast.error(err instanceof Error ? err.message : "Registration failed. Please try again.")
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Registration failed. Please try again."
+      setError(message)
+      toast.error(message)
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function handleGoogle() {
+    setError(null)
+    setGoogleLoading(true)
+
+    try {
+      await signInWithGoogle(getSafeNext() ?? "/customer")
+    } catch (err) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Google sign-up failed. Please try again."
+      setError(message)
+      toast.error(message)
+    } finally {
+      setGoogleLoading(false)
     }
   }
 
   return (
     <AuthCard
       title="Create your account"
-      description="Join PizzaHub to save your details and track your orders."
+      description="Join PizzaHub to order pizzas, or register as a restaurant owner to start selling."
       footer={
         <>
           Already have an account?{" "}
@@ -82,13 +123,61 @@ export default function RegisterPage() {
           >
             Sign in
           </Link>
+          <span className="mt-2 block">
+            Already a vendor?{" "}
+            <Link
+              href="/vendor"
+              className="font-medium text-primary hover:text-primary-hover"
+            >
+              Vendor dashboard
+            </Link>
+          </span>
         </>
       }
     >
       <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+        <fieldset className="space-y-2">
+          <legend className="text-sm font-medium text-foreground">
+            Account role
+          </legend>
+          <div className="grid grid-cols-2 gap-3">
+            {(["customer", "vendor"] as const).map((value) => (
+              <label
+                key={value}
+                className={cn(
+                  "flex cursor-pointer flex-col gap-1 rounded-lg border p-3 text-sm transition-colors",
+                  accountType === value
+                    ? "border-primary bg-primary/5"
+                    : "border-border bg-background hover:bg-secondary"
+                )}
+              >
+                <input
+                  type="radio"
+                  name="accountType"
+                  value={value}
+                  checked={accountType === value}
+                  onChange={() => setAccountType(value)}
+                  className="sr-only"
+                />
+                <span className="font-medium text-foreground">
+                  {value === "vendor" ? "Vendor" : "Customer"}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  {value === "vendor"
+                    ? "Restaurant owner"
+                    : "Order and track pizzas"}
+                </span>
+              </label>
+            ))}
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Admin accounts are never created through public registration.
+          </p>
+        </fieldset>
+
         <div className="space-y-2">
           <label htmlFor="name" className="text-sm font-medium text-foreground">
-            Name
+            Full Name
           </label>
           <input
             id="name"
@@ -97,7 +186,7 @@ export default function RegisterPage() {
             required
             value={name}
             onChange={(event) => setName(event.target.value)}
-            placeholder="Your name"
+            placeholder="Your full name"
             className={inputClassName}
           />
         </div>
@@ -133,7 +222,7 @@ export default function RegisterPage() {
               required
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              placeholder="At least 8 characters"
+              placeholder="Min 6 chars, upper + lower case"
               className={cn(inputClassName, "pr-11")}
             />
             <button
@@ -149,6 +238,9 @@ export default function RegisterPage() {
               )}
             </button>
           </div>
+          <p className="text-xs text-muted-foreground">
+            At least 6 characters, one uppercase and one lowercase letter.
+          </p>
         </div>
 
         <div className="space-y-2">
@@ -181,6 +273,25 @@ export default function RegisterPage() {
 
         <Button type="submit" size="lg" disabled={loading} className="w-full">
           {loading ? "Creating account..." : "Create account"}
+        </Button>
+
+        <div className="flex items-center gap-3">
+          <span className="h-px flex-1 bg-border" />
+          <span className="text-xs tracking-wide text-muted-foreground uppercase">
+            or
+          </span>
+          <span className="h-px flex-1 bg-border" />
+        </div>
+
+        <Button
+          type="button"
+          variant="outline"
+          size="lg"
+          disabled={loading || googleLoading}
+          onClick={() => void handleGoogle()}
+          className="w-full"
+        >
+          {googleLoading ? "Connecting..." : "Continue with Google"}
         </Button>
       </form>
     </AuthCard>

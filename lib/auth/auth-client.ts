@@ -8,6 +8,7 @@ export type AuthUser = {
   image?: string | null
   emailVerified: boolean
   role: "customer" | "vendor" | "admin"
+  accountType?: "customer" | "vendor"
   isBlocked: boolean
   isPremium: boolean
   subscriptionStatus: string
@@ -28,6 +29,12 @@ export type AuthSession = {
     userAgent?: string | null
   }
   user: AuthUser
+}
+
+export function dashboardPathForRole(role: AuthUser["role"]): string {
+  if (role === "admin") return "/admin"
+  if (role === "vendor") return "/vendor"
+  return "/customer"
 }
 
 export type AuthTokenResponse = {
@@ -71,12 +78,13 @@ async function authFetch(path: string, init?: RequestInit) {
 export async function signUp(
   name: string,
   email: string,
-  password: string
+  password: string,
+  accountType: "customer" | "vendor" = "customer"
 ): Promise<AuthResult> {
   return authFetch("/api/auth/sign-up/email", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, email, password }),
+    body: JSON.stringify({ name, email, password, accountType }),
   }) as Promise<AuthResult>
 }
 
@@ -146,22 +154,27 @@ export async function changePassword(
   })
 }
 
-export function signInWithGoogle(callbackURL = "/"): void {
+export async function signInWithGoogle(callbackURL = "/"): Promise<void> {
   const url = new URL("/api/auth/sign-in/social", API_BASE_URL)
-  // Better Auth social sign-in is a POST endpoint; use a form-less navigation fallback.
-  void fetch(url.toString(), {
+
+  const response = await fetch(url.toString(), {
     method: "POST",
     credentials: "include",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ provider: "google", callbackURL }),
   })
-    .then(async (response) => {
-      const data = (await response.json()) as { url?: string }
-      if (data?.url) {
-        window.location.href = data.url
-      }
-    })
-    .catch(() => {
-      // noop
-    })
+
+  const data = (await response.json().catch(() => null)) as
+    | { url?: string; message?: string }
+    | null
+
+  if (!response.ok) {
+    throw new Error(data?.message ?? "Google sign-in failed. Please try again.")
+  }
+
+  if (!data?.url) {
+    throw new Error("Google sign-in is not available right now.")
+  }
+
+  window.location.href = data.url
 }

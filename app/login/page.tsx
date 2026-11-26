@@ -8,6 +8,8 @@ import { useState } from "react"
 import { AuthCard } from "@/components/auth-card"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/hooks/use-auth"
+import { dashboardPathForRole, signInWithGoogle } from "@/lib/auth/auth-client"
+import { getSafeNext } from "@/lib/auth/redirect"
 import { useToastContext } from "@/lib/toast/context"
 import { cn } from "@/lib/utils"
 
@@ -24,6 +26,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [googleLoading, setGoogleLoading] = useState(false)
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -37,14 +40,34 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      await login(email.trim(), password)
+      const user = await login(email.trim(), password)
       toast.success("You're signed in!")
-      router.push("/")
+      router.push(getSafeNext() ?? dashboardPathForRole(user.role))
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed. Please try again.")
-      toast.error(err instanceof Error ? err.message : "Login failed. Please try again.")
+      const message =
+        err instanceof Error ? err.message : "Login failed. Please try again."
+      setError(message)
+      toast.error(message)
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function handleGoogle() {
+    setError(null)
+    setGoogleLoading(true)
+
+    try {
+      await signInWithGoogle(getSafeNext() ?? "/")
+    } catch (err) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Google sign-in failed. Please try again."
+      setError(message)
+      toast.error(message)
+    } finally {
+      setGoogleLoading(false)
     }
   }
 
@@ -125,6 +148,25 @@ export default function LoginPage() {
 
         <Button type="submit" size="lg" disabled={loading} className="w-full">
           {loading ? "Signing in..." : "Sign in"}
+        </Button>
+
+        <div className="flex items-center gap-3">
+          <span className="h-px flex-1 bg-border" />
+          <span className="text-xs tracking-wide text-muted-foreground uppercase">
+            or
+          </span>
+          <span className="h-px flex-1 bg-border" />
+        </div>
+
+        <Button
+          type="button"
+          variant="outline"
+          size="lg"
+          disabled={loading || googleLoading}
+          onClick={() => void handleGoogle()}
+          className="w-full"
+        >
+          {googleLoading ? "Connecting..." : "Continue with Google"}
         </Button>
       </form>
     </AuthCard>

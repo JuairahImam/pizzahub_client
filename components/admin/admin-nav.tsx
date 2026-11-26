@@ -9,6 +9,7 @@ const ADMIN_NAV = [
   { label: "Overview", href: "/admin" },
   { label: "Menu Moderation", href: "/admin/menu" },
   { label: "Manage Users", href: "/admin/users" },
+  { label: "Vendor Requests", href: "/admin/vendor-requests" },
   { label: "Transactions", href: "/admin/transactions" },
 ]
 

@@ -19,6 +19,11 @@ export function useRequireAuth(requiredRole?: RequiredRole) {
       return
     }
 
+    if (user?.isBlocked) {
+      router.replace("/blocked")
+      return
+    }
+
     if (requiredRole && user?.role !== requiredRole) {
       router.replace("/")
     }
@@ -27,6 +32,7 @@ export function useRequireAuth(requiredRole?: RequiredRole) {
   const allowed =
     !loading &&
     isAuthenticated &&
+    !user?.isBlocked &&
     (requiredRole === undefined || user?.role === requiredRole)
 
   return { user, loading, isAuthenticated, allowed }
