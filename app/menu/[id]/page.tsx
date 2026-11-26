@@ -15,6 +15,7 @@ import { useAuth } from "@/hooks/use-auth"
 import { useCart } from "@/hooks/use-cart"
 import { ApiError, apiGet } from "@/lib/api/client"
 import { ENDPOINTS } from "@/lib/api/endpoints"
+import { cn } from "@/lib/utils"
 import type { MenuItem } from "@/types/menu"
 
 const FALLBACK_IMAGE = "/images/hero-pizza.jpg"
@@ -38,6 +39,7 @@ export default function MenuItemDetailsPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [reloadToken, setReloadToken] = useState(0)
   const [added, setAdded] = useState(false)
+  const [activeImage, setActiveImage] = useState(0)
 
   useEffect(() => {
     if (!id) {
@@ -64,6 +66,7 @@ export default function MenuItemDetailsPage() {
           return
         }
         setItem(response.menuItem)
+        setActiveImage(0)
         setStatus("ready")
       })
       .catch((error) => {
@@ -176,7 +179,11 @@ export default function MenuItemDetailsPage() {
             <section className="overflow-hidden rounded-2xl border border-border bg-card">
               <div className="relative aspect-[4/3] bg-muted">
                 <Image
-                  src={item.imageUrl || FALLBACK_IMAGE}
+                  src={
+                    (item.images?.length
+                      ? item.images[activeImage] ?? item.images[0]
+                      : item.imageUrl) || FALLBACK_IMAGE
+                  }
                   alt={`${item.name} from ${item.restaurant?.name ?? "PizzaHub"}`}
                   fill
                   sizes="(min-width: 1024px) 50vw, 100vw"
@@ -187,6 +194,26 @@ export default function MenuItemDetailsPage() {
                   }}
                 />
               </div>
+              {item.images && item.images.length > 1 ? (
+                <div className="flex flex-wrap gap-2 border-t border-border p-3">
+                  {item.images.map((src, index) => (
+                    <button
+                      key={`${src}-${index}`}
+                      type="button"
+                      onClick={() => setActiveImage(index)}
+                      aria-label={`Show image ${index + 1}`}
+                      className={cn(
+                        "relative size-16 overflow-hidden rounded-lg border-2 transition-colors",
+                        activeImage === index
+                          ? "border-primary"
+                          : "border-transparent hover:border-border"
+                      )}
+                    >
+                      <Image src={src} alt="" fill sizes="64px" className="object-cover" />
+                    </button>
+                  ))}
+                </div>
+              ) : null}
             </section>
 
             <section className="space-y-6">

@@ -147,7 +147,7 @@ export function SiteHeader() {
               size="lg"
               className="h-11 rounded-[10px] px-4"
             >
-              Explore Menu
+              Explore Pizza Menu
             </ButtonLink>
           </span>
 
@@ -198,8 +198,34 @@ export function SiteHeader() {
                       My Orders
                     </Link>
                     {user?.role === "customer" ? (
+                      <>
+                        <Link
+                          href="/customer"
+                          role="menuitem"
+                          onClick={() => setUserMenuOpen(false)}
+                          className={cn(
+                            "flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-secondary",
+                            focusRing
+                          )}
+                        >
+                          Customer Dashboard
+                        </Link>
+                        <Link
+                          href="/become-a-vendor"
+                          role="menuitem"
+                          onClick={() => setUserMenuOpen(false)}
+                          className={cn(
+                            "flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-secondary",
+                            focusRing
+                          )}
+                        >
+                          Become a vendor
+                        </Link>
+                      </>
+                    ) : null}
+                    {user?.role === "vendor" ? (
                       <Link
-                        href="/customer"
+                        href="/vendor"
                         role="menuitem"
                         onClick={() => setUserMenuOpen(false)}
                         className={cn(
@@ -207,7 +233,20 @@ export function SiteHeader() {
                           focusRing
                         )}
                       >
-                        Customer Dashboard
+                        Vendor Dashboard
+                      </Link>
+                    ) : null}
+                    {user?.role === "admin" ? (
+                      <Link
+                        href="/admin"
+                        role="menuitem"
+                        onClick={() => setUserMenuOpen(false)}
+                        className={cn(
+                          "flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-secondary",
+                          focusRing
+                        )}
+                      >
+                        Admin Dashboard
                       </Link>
                     ) : null}
                     <Link
@@ -371,6 +410,26 @@ export function SiteHeader() {
               >
                 My Orders
               </Link>
+              <Link
+                href={
+                  user.role === "vendor"
+                    ? "/vendor"
+                    : user.role === "admin"
+                      ? "/admin"
+                      : "/become-a-vendor"
+                }
+                onClick={() => setIsOpen(false)}
+                className={cn(
+                  "flex w-full items-center gap-2 rounded-lg px-3 py-3 text-sm font-medium text-foreground transition-colors hover:bg-secondary",
+                  focusRing
+                )}
+              >
+                {user.role === "vendor"
+                  ? "Vendor Dashboard"
+                  : user.role === "customer"
+                    ? "Become a vendor"
+                    : "Admin dashboard"}
+              </Link>
               <button
                 type="button"
                 disabled={signingOut}
@@ -434,7 +493,7 @@ export function SiteHeader() {
               onClick={() => setIsOpen(false)}
               className="h-11 w-full rounded-[10px]"
             >
-              Explore Menu
+              Explore Pizza Menu
             </ButtonLink>
           </li>
         </ul>

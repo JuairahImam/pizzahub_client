@@ -2,10 +2,11 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowRight, Plus } from "lucide-react"
+import { ArrowRight, MapPin, Plus } from "lucide-react"
 import { useState } from "react"
 
 import { Price } from "@/components/price"
+import { useAuth } from "@/hooks/use-auth"
 import { useCart } from "@/hooks/use-cart"
 import { cn } from "@/lib/utils"
 
@@ -21,6 +22,7 @@ type MenuItemCardProps = {
   price: number
   restaurantId: string
   restaurantName?: string | null
+  restaurantAddress?: string | null
   available?: boolean
   priority?: boolean
   className?: string
@@ -36,6 +38,7 @@ export function MenuItemCard({
   price,
   restaurantId,
   restaurantName,
+  restaurantAddress,
   available = true,
   priority = false,
   className,
@@ -43,9 +46,23 @@ export function MenuItemCard({
   const [src, setSrc] = useState(imageSrc || FALLBACK_IMAGE)
   const [added, setAdded] = useState(false)
   const { addItem } = useCart()
+  const { user } = useAuth()
+
+  const signInHref = `/login?next=${encodeURIComponent(`/menu/${id}`)}`
+  const detailsHref = user ? `/menu/${id}` : signInHref
+
+  const actionClassName = cn(
+    "inline-flex h-9 items-center gap-2 rounded-lg px-3 text-sm font-medium transition-colors",
+    available
+      ? added
+        ? "bg-secondary text-primary"
+        : "bg-primary text-primary-foreground hover:bg-primary-hover"
+      : "cursor-not-allowed bg-muted text-muted-foreground",
+    "disabled:opacity-60"
+  )
 
   function handleAddToCart() {
-    if (!available) return
+    if (!available || !user) return
 
     addItem({
       menuItemId: id,
@@ -93,41 +110,50 @@ export function MenuItemCard({
           </p>
         </div>
 
-        {restaurantName ? (
-          <p className="text-xs font-medium text-muted-foreground">
-            {restaurantName}
-          </p>
+        {restaurantName || restaurantAddress ? (
+          <div className="space-y-1">
+            {restaurantName ? (
+              <p className="text-xs font-medium text-foreground">
+                {restaurantName}
+              </p>
+            ) : null}
+            {restaurantAddress ? (
+              <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
+                <MapPin className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
+                {restaurantAddress}
+              </p>
+            ) : null}
+          </div>
         ) : null}
 
         <div className="mt-3">
           <Link
-            href={`/menu/${id}`}
+            href={detailsHref}
             className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary-hover"
           >
-            View details
+            {user ? "View details" : "Sign in to view details"}
             <ArrowRight className="size-4" aria-hidden="true" />
           </Link>
         </div>
 
         <div className="mt-auto flex items-center justify-between gap-3 border-t border-border pt-4">
           <Price value={price} />
-          <button
-            type="button"
-            onClick={handleAddToCart}
-            disabled={!available}
-            className={cn(
-              "inline-flex h-9 items-center gap-2 rounded-lg px-3 text-sm font-medium transition-colors",
-              available
-                ? added
-                  ? "bg-secondary text-primary"
-                  : "bg-primary text-primary-foreground hover:bg-primary-hover"
-                : "cursor-not-allowed bg-muted text-muted-foreground",
-              "disabled:opacity-60"
-            )}
-          >
-            <Plus className="size-4" aria-hidden="true" />
-            {added ? "Added" : "Add to cart"}
-          </button>
+          {user ? (
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              disabled={!available}
+              className={actionClassName}
+            >
+              <Plus className="size-4" aria-hidden="true" />
+              {added ? "Added" : "Add to cart"}
+            </button>
+          ) : (
+            <Link href={signInHref} className={actionClassName}>
+              <Plus className="size-4" aria-hidden="true" />
+              Sign in to order
+            </Link>
+          )}
         </div>
       </div>
     </article>

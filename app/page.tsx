@@ -14,6 +14,7 @@ import {
 
 import { ButtonLink } from "@/components/button-link"
 import { PopularMenu } from "@/components/popular-menu"
+import { Reveal } from "@/components/reveal"
 import { SectionHeading } from "@/components/section-heading"
 
 import { cn } from "@/lib/utils"
@@ -98,7 +99,7 @@ export default function HomePage() {
                   size="lg"
                   className="h-11 gap-2 rounded-[10px] px-6"
                 >
-                  Explore Menu
+                  Explore Pizza Menu
                   <ArrowRight className="size-4" aria-hidden="true" />
                 </ButtonLink>
                 <ButtonLink
@@ -169,7 +170,7 @@ export default function HomePage() {
           tabIndex={-1}
           className="panel-ease scroll-mt-24 border-y border-border bg-background outline-none"
         >
-          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
+          <Reveal className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
             <SectionHeading
               id="categories-heading"
               eyebrow="Browse by category"
@@ -180,21 +181,39 @@ export default function HomePage() {
             <div className="mt-10 grid gap-4 sm:grid-cols-3">
               {[
                 {
-                  label: "Pizza",
-                  description: "Classic and specialty pies",
-                  href: "/menu?category=Pizza",
+                  label: "Classic Pizzas",
+                  description: "The favorites you know and love",
+                  href: "/menu?category=Classic%20Pizzas",
                   icon: Pizza,
                 },
                 {
-                  label: "Sides",
+                  label: "Vegetarian Pizzas",
+                  description: "Loaded with fresh vegetables",
+                  href: "/menu?category=Vegetarian%20Pizzas",
+                  icon: Leaf,
+                },
+                {
+                  label: "Meat Lovers",
+                  description: "For the seriously hungry",
+                  href: "/menu?category=Meat%20Lovers",
+                  icon: Flame,
+                },
+                {
+                  label: "Specialty / Gourmet Pizzas",
+                  description: "Something a little different",
+                  href: "/menu?category=Specialty%20%2F%20Gourmet%20Pizzas",
+                  icon: ChefHat,
+                },
+                {
+                  label: "Sides & Appetizers",
                   description: "Bread, dips, and extras",
-                  href: "/menu?category=Sides",
+                  href: "/menu?category=Sides%20%26%20Appetizers",
                   icon: Sandwich,
                 },
                 {
-                  label: "Drinks",
-                  description: "Cold and refreshing",
-                  href: "/menu?category=Drinks",
+                  label: "Beverages & Desserts",
+                  description: "Something sweet or refreshing",
+                  href: "/menu?category=Beverages%20%26%20Desserts",
                   icon: CupSoda,
                 },
               ].map(({ label, description, href, icon: Icon }) => (
@@ -218,7 +237,7 @@ export default function HomePage() {
                 </a>
               ))}
             </div>
-          </div>
+          </Reveal>
         </section>
 
         <section
@@ -227,13 +246,13 @@ export default function HomePage() {
           tabIndex={-1}
           className="panel-ease scroll-mt-24 border-y border-border bg-background outline-none"
         >
-          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
+          <Reveal className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
             <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
               <SectionHeading
                 id="menu-heading"
                 eyebrow="From the oven"
-                title="Popular right now"
-                description="A few favorites from our kitchen, updated from the live menu."
+                title="Featured menu items"
+                description="Approved and available picks from restaurants on PizzaHub."
               />
               <Link
                 href="/menu"
@@ -250,7 +269,7 @@ export default function HomePage() {
             <div className="mt-10">
               <PopularMenu />
             </div>
-          </div>
+          </Reveal>
         </section>
 
         <section
@@ -355,6 +374,40 @@ export default function HomePage() {
               ))}
             </div>
           </div>
+        </section>
+
+        <section
+          id="sell-with-us"
+          aria-labelledby="sell-heading"
+          tabIndex={-1}
+          className="scroll-mt-24 bg-primary text-primary-foreground outline-none"
+        >
+          <Reveal className="mx-auto flex max-w-7xl flex-col gap-8 px-4 py-16 sm:px-6 sm:py-20 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+            <div className="max-w-2xl">
+              <p className="text-xs font-medium tracking-[0.2em] text-accent uppercase">
+                For restaurant owners
+              </p>
+              <h2
+                id="sell-heading"
+                className="mt-4 text-3xl leading-tight font-semibold tracking-tight text-balance sm:text-4xl"
+              >
+                Put your pizza on the PizzaHub menu.
+              </h2>
+              <p className="mt-4 text-base leading-relaxed text-pretty text-primary-foreground/80">
+                Apply to sell with us. Once your request is approved, your
+                vendor dashboard is ready for your restaurant, menu, and
+                orders.
+              </p>
+            </div>
+            <ButtonLink
+              href="/become-a-vendor"
+              size="lg"
+              className="h-11 shrink-0 gap-2 rounded-[10px] px-6"
+            >
+              Become a vendor
+              <ArrowRight className="size-4" aria-hidden="true" />
+            </ButtonLink>
+          </Reveal>
         </section>
       </main>
 
