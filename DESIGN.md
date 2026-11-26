@@ -152,7 +152,14 @@ Do not invent delivery estimates, discounts, ratings, restaurant counts, or popu
 ### Authentication
 - `/login`: email/password and Google login only if configured and working.
 - `/register`: fields supported by Better Auth.
-- Never trust a client-supplied role to grant vendor/admin privileges.
+- Signup may send `accountType: "customer" | "vendor"`; the server derives the stored role from that allow-listed value. Never accept a client-supplied `role` (especially `admin`), and never trust client role checks alone.
+
+### Become a vendor `/become-a-vendor`
+- Available to signed-in customers; guests get a clear sign-in/create-account prompt.
+- Collect only restaurant name and an optional message; the account identity comes from the session, not the form.
+- Show the real request status: pending, approved (with a vendor dashboard link), or rejected (with the reason and a re-apply form).
+- Vendor privileges are granted only by an admin approving the request on the server.
+- Do not call it instant signup; approval is required.
 
 ### Vendor dashboard
 Suggested navigation: Overview, Restaurant, Menu Items, Orders, Subscription, Profile.
@@ -166,7 +173,9 @@ Suggested navigation: Overview, Restaurant, Menu Items, Orders, Subscription, Pr
 Keep availability separate from moderation approval. They are not the same property.
 
 ### Admin dashboard
-Suggested navigation: Overview, Users, Vendors, Menu Moderation, Transactions, Profile.
+Suggested navigation: Overview, Users, Vendor Requests, Menu Moderation, Transactions, Profile.
+
+Vendor Requests: review pending applications, show applicant and message, approve, or reject with a reason. Approval is the only UI path that grants the vendor role.
 
 Only connect screens to endpoints that exist. Do not fake successful moderation, transactions, or dashboard statistics when the backend route is missing.
 

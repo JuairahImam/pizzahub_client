@@ -4,6 +4,8 @@ PizzaHub is a Next.js App Router, React 19, TypeScript, Tailwind v4, and shadcn/
 
 Repository: `https://github.com/JuairahImam/pizzahub_client.git`
 
+Server repository: `https://github.com/JuairahImam/pizzahub_server.git`
+
 Production API: `https://pizzahub-server-toql.onrender.com`
 
 Live storefront (verified by HTTP checks): `https://pizzahubclient.vercel.app`
@@ -113,7 +115,9 @@ Client authentication:
 Roles:
 - `customer` — browses menu, creates orders, manages own orders and profile.
 - `vendor` — manages restaurant, menu, orders, and premium subscription.
-- `admin` — manages users, menu moderation, and transactions.
+- `admin` — manages users, vendor signup requests, menu moderation, and transactions.
+
+Signup offers a Customer / Vendor (restaurant owner) choice via `accountType`. The server derives the stored `role` from that allow-listed value in a database hook, so public registration still cannot create an admin. Customers may also submit an upgrade request from `/become-a-vendor`, which an admin approves in trusted server code.
 
 ## Admin test access
 
@@ -129,6 +133,7 @@ Do not print the values in README or commit them. The evaluator should supply a 
 
 Admin workflows:
 - Users: search, role/status filters, pagination, details dialog, block/unblock, self-block prevention.
+- Vendor requests: pending/approved/rejected lists, search/status filters, pagination, details dialog, approve, reject with reason validation.
 - Menu moderation: pending/approved/rejected lists, search/category filters, pagination, approve/reject with reason validation, delete.
 - Transactions: list, search, status/type filters, pagination, details dialog, paid amount/currency display.
 - Premium: checkout session creation, webhook-verified activation, transaction persistence.
@@ -148,6 +153,15 @@ Admin workflows:
 - View order details, delivery address/phone, rejection reason, and order totals.
 - Manage Premium subscription and subscription status.
 
+## Vendor signup workflow
+
+- Signed-in customers apply at `/become-a-vendor` with a restaurant name and optional message.
+- The server stores a pending request; duplicates are rejected while one is pending.
+- The customer page shows the live status (pending, approved, or rejected with a reason) and allows re-applying after rejection.
+- Approval is handled by an admin at `/admin/vendor-requests`; only the server changes the user's role to `vendor`.
+- After approval, the client refreshes its session so the new role appears in the header and route guards.
+- Sign in/register links carry `?next=/become-a-vendor` so applicants return to the form after authenticating.
+
 ## Premium checkout and Stripe
 
 - Vendor clicks Premium on `/vendor/premium`; frontend calls `POST /api/vendor/premium/checkout`.
@@ -163,4 +177,9 @@ Admin workflows:
 - `npm run lint` — ESLint.
 - `npm run build` — production build.
 - `npm run format` — Prettier formatting.
-- Manual: open the dev server, sign up as customer/vendor/admin, browse menu, place order, vendor accept/reject, admin moderate/delete, theme toggle, dashboard charts, location filter, custom 404.
+- Manual: open the dev server, register with the Customer or Vendor role, browse the menu, place an order, and use the matching dashboard. Admin test accounts come from the seed script; they are never created by public registration.
+
+## Challenge implementation notes
+
+- **Advanced search and sorting:** the menu page sends `q`, `category`, `location`, `minPrice`, `maxPrice`, `sort=price_asc|price_desc`, `page`, and `limit` to `GET /api/menu-items`. The server controller validates each parameter and passes them to `customer-menu.service`, which builds the MongoDB query and sort order.
+- **JWT verification:** protected APIs read `Authorization: Bearer <token>`, `jwt.middleware.ts` verifies the token against Better Auth's JWKS (issuer/audience), re-reads the user's role and blocked state from MongoDB on every request, then `role.middleware.ts` returns 401 for missing sessions and 403 for wrong roles.
