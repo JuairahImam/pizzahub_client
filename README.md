@@ -181,5 +181,5 @@ Admin workflows:
 
 ## Challenge implementation notes
 
-- **Advanced search and sorting:** the menu page sends `q`, `category`, `location`, `minPrice`, `maxPrice`, `sort=price_asc|price_desc`, `page`, and `limit` to `GET /api/menu-items`. The server controller validates each parameter and passes them to `customer-menu.service`, which builds the MongoDB query and sort order.
+- **Advanced search and sorting:** the menu page sends `q`, `category`, `location`, `minPrice`, `maxPrice`, `sort=newest|price_asc|price_desc|premium_first`, `page`, and `limit` to `GET /api/menu-items`. `premium_first` is used by the homepage featured section so verified Premium vendors appear first. The server controller validates each parameter and passes them to `customer-menu.service`, which builds the MongoDB query and sort order. The public API also returns `isPremium`, `location`, `itemName`, and `status` so the UI can render Premium badges and location labels.
 - **JWT verification:** protected APIs read `Authorization: Bearer <token>`, `jwt.middleware.ts` verifies the token against Better Auth's JWKS (issuer/audience), re-reads the user's role and blocked state from MongoDB on every request, then `role.middleware.ts` returns 401 for missing sessions and 403 for wrong roles.

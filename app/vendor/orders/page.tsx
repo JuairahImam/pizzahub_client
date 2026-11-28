@@ -20,7 +20,7 @@ import type { Order, OrderStatus, VendorOrdersResponse } from "@/types/order"
 type StatusFilter =
   | "ALL"
   | "PENDING"
-  | "CONFIRMED"
+  | "ACCEPTED"
   | "PREPARING"
   | "OUT_FOR_DELIVERY"
   | "DELIVERED"
@@ -30,7 +30,7 @@ type StatusFilter =
 const STATUS_FILTERS: StatusFilter[] = [
   "ALL",
   "PENDING",
-  "CONFIRMED",
+  "ACCEPTED",
   "PREPARING",
   "OUT_FOR_DELIVERY",
   "DELIVERED",
@@ -53,7 +53,7 @@ function formatOrderId(value: string) {
 }
 
 function getNextStatus(status: OrderStatus): OrderStatus | null {
-  if (status === "CONFIRMED") return "PREPARING"
+  if (status === "ACCEPTED") return "PREPARING"
   if (status === "PREPARING") return "OUT_FOR_DELIVERY"
   if (status === "OUT_FOR_DELIVERY") return "DELIVERED"
   return null

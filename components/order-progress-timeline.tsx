@@ -24,7 +24,7 @@ type TimelineStep = {
 
 const normalSteps: TimelineStep[] = [
   { status: "PENDING", label: "Pending order", icon: Clock },
-  { status: "CONFIRMED", label: "Vendor confirmed", icon: CheckCircle2 },
+  { status: "ACCEPTED", label: "Vendor accepted", icon: CheckCircle2 },
   { status: "PREPARING", label: "Preparing", icon: ChefHat },
   { status: "OUT_FOR_DELIVERY", label: "Out for delivery", icon: Route },
   { status: "DELIVERED", label: "Delivered", icon: CheckCircle2 },
@@ -44,7 +44,7 @@ const cancelledStep: TimelineStep = {
 
 const normalOrderStatusIndex: Record<OrderStatus, number | null> = {
   PENDING: 0,
-  CONFIRMED: 1,
+  ACCEPTED: 1,
   PREPARING: 2,
   OUT_FOR_DELIVERY: 3,
   DELIVERED: 4,

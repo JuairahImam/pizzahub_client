@@ -8,7 +8,7 @@ export type OrderItem = {
 
 export type OrderStatus =
   | "PENDING"
-  | "CONFIRMED"
+  | "ACCEPTED"
   | "PREPARING"
   | "OUT_FOR_DELIVERY"
   | "DELIVERED"

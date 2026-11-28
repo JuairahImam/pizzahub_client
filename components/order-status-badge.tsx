@@ -3,7 +3,7 @@ import type { OrderStatus } from "@/types/order"
 
 const STATUS_LABELS: Record<OrderStatus, string> = {
   PENDING: "Pending",
-  CONFIRMED: "Accepted",
+  ACCEPTED: "Accepted",
   PREPARING: "Preparing",
   OUT_FOR_DELIVERY: "Out for delivery",
   DELIVERED: "Delivered",
@@ -13,7 +13,7 @@ const STATUS_LABELS: Record<OrderStatus, string> = {
 
 const STATUS_STYLES: Record<OrderStatus, string> = {
   PENDING: "bg-accent/20 text-accent-foreground",
-  CONFIRMED: "bg-primary/10 text-primary",
+  ACCEPTED: "bg-primary/10 text-primary",
   PREPARING: "bg-primary/10 text-primary",
   OUT_FOR_DELIVERY: "bg-primary/10 text-primary",
   DELIVERED: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",

@@ -16,7 +16,7 @@ export type AdminDashboardOverview = {
     orders: {
       total: number
       pending: number
-      confirmed: number
+      accepted: number
       preparing: number
       outForDelivery: number
       delivered: number

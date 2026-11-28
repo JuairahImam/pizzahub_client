@@ -117,11 +117,11 @@ function CustomerDashboardContent() {
     }
   }, [authLoading, isAuthenticated, accessToken, reloadToken])
 
-  const inProgressStatuses = new Set(["CONFIRMED", "PREPARING", "OUT_FOR_DELIVERY"])
+  const inProgressStatuses = new Set(["ACCEPTED", "PREPARING", "OUT_FOR_DELIVERY"])
   const counts = {
     total: orders.length,
     pending: orders.filter((order) => order.status === "PENDING").length,
-    accepted: orders.filter((order) => order.status === "CONFIRMED").length,
+    accepted: orders.filter((order) => order.status === "ACCEPTED").length,
     inProgress: orders.filter((order) => inProgressStatuses.has(order.status)).length,
     delivered: orders.filter((order) => order.status === "DELIVERED").length,
     rejected: orders.filter((order) => order.status === "REJECTED").length,

@@ -225,7 +225,7 @@ function AdminDashboardContent() {
                 </h2>
                 <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
                   <StatCard label="Pending" value={overview.orders.pending} />
-                  <StatCard label="Confirmed" value={overview.orders.confirmed} />
+                  <StatCard label="Accepted" value={overview.orders.accepted} />
                   <StatCard label="Preparing" value={overview.orders.preparing} />
                   <StatCard label="Out for delivery" value={overview.orders.outForDelivery} />
                   <StatCard label="Delivered" value={overview.orders.delivered} />
@@ -267,7 +267,7 @@ function AdminDashboardContent() {
                 <BarChart
                   data={toChartBars({
                     Pending: overview.orders.pending,
-                    Confirmed: overview.orders.confirmed,
+                    Confirmed: overview.orders.accepted,
                     Preparing: overview.orders.preparing,
                     "Out for delivery": overview.orders.outForDelivery,
                     Delivered: overview.orders.delivered,

@@ -20,7 +20,7 @@ import type { VendorMenuResponse } from "@/types/vendor-menu"
 
 const STATUS_ORDER: OrderStatus[] = [
   "PENDING",
-  "CONFIRMED",
+  "ACCEPTED",
   "PREPARING",
   "OUT_FOR_DELIVERY",
   "DELIVERED",
@@ -172,7 +172,7 @@ function VendorOverviewContent() {
   const pendingOrders =
     statusCounts.find(({ status }) => status === "PENDING")?.count ?? 0
   const acceptedOrders =
-    statusCounts.find(({ status }) => status === "CONFIRMED")?.count ?? 0
+    statusCounts.find(({ status }) => status === "ACCEPTED")?.count ?? 0
   const currentPlan =
     user?.isPremium && user.subscriptionStatus === "ACTIVE"
       ? "Premium"
@@ -282,7 +282,7 @@ function VendorOverviewContent() {
             <MetricCard
               label="Accepted orders"
               value={String(acceptedOrders)}
-              hint="Confirmed orders"
+              hint="Accepted orders"
             />
             <MetricCard
               label="Current plan"
