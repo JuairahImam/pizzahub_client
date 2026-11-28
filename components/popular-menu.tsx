@@ -26,7 +26,8 @@ export function PopularMenu() {
 
       try {
         const response = await apiGet<MenuListResponse>(ENDPOINTS.menuItems, {
-          sort: "newest",
+          // Premium vendors get featured placement on the homepage.
+          sort: "premium_first",
           page: 1,
           limit: 6,
         })
@@ -84,7 +85,8 @@ export function PopularMenu() {
               price={item.price}
               restaurantId={item.restaurantId}
               restaurantName={item.restaurant?.name}
-              restaurantAddress={item.restaurant?.address}
+              restaurantAddress={item.location ?? item.restaurant?.address}
+              isPremium={item.isPremium}
               available={item.isAvailable}
               priority={index < 2}
             />

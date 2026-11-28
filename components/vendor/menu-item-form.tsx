@@ -12,6 +12,7 @@ type FormValues = {
   name: string
   description: string
   category: string
+  location: string
   price: string
   isAvailable: boolean
 }
@@ -30,6 +31,7 @@ const EMPTY_VALUES: FormValues = {
   name: "",
   description: "",
   category: "",
+  location: "",
   price: "",
   isAvailable: true,
 }
@@ -38,6 +40,7 @@ const FIELD_ORDER: (FieldName | "image")[] = [
   "name",
   "description",
   "category",
+  "location",
   "price",
   "image",
 ]
@@ -46,6 +49,7 @@ const FIELD_LABELS: Record<FieldName, string> = {
   name: "Item name",
   description: "Description",
   category: "Category",
+  location: "Location (area / city)",
   price: "Price",
   isAvailable: "Availability",
 }
@@ -74,6 +78,7 @@ export function MenuItemForm({
           name: initialValues.name,
           description: initialValues.description,
           category: initialValues.category,
+          location: initialValues.location,
           price: initialValues.price,
           isAvailable: initialValues.isAvailable,
         }
@@ -99,6 +104,7 @@ export function MenuItemForm({
     values.name.trim() !== (initialValues.name ?? "").trim() ||
     values.description.trim() !== (initialValues.description ?? "").trim() ||
     values.category.trim() !== (initialValues.category ?? "").trim() ||
+    values.location.trim() !== (initialValues.location ?? "").trim() ||
     values.price.trim() !== (initialValues.price ?? "").trim() ||
     values.isAvailable !== (initialValues.isAvailable ?? true) ||
     selectedFiles.length > 0
@@ -221,6 +227,10 @@ export function MenuItemForm({
       nextErrors.category = "Category is required."
     }
 
+    if (!values.location.trim()) {
+      nextErrors.location = "Location (area / city) is required."
+    }
+
     const priceValue = Number(values.price)
     if (!values.price.trim() || !Number.isFinite(priceValue) || priceValue <= 0) {
       nextErrors.price = "Price must be a positive number."
@@ -252,6 +262,7 @@ export function MenuItemForm({
           name: values.name.trim(),
           description: values.description.trim(),
           category: values.category.trim(),
+          location: values.location.trim(),
           price: values.price.trim(),
           isAvailable: values.isAvailable,
         },
@@ -372,6 +383,38 @@ export function MenuItemForm({
             className="text-sm text-destructive"
           >
             {fieldErrors.description}
+          </p>
+        ) : null}
+      </div>
+
+      <div className="space-y-2">
+        <label
+          htmlFor="menu-item-location"
+          className="text-sm font-medium text-foreground"
+        >
+          {FIELD_LABELS.location}
+        </label>
+        <input
+          id="menu-item-location"
+          name="location"
+          type="text"
+          value={values.location}
+          onChange={(event) => updateField("location", event.target.value)}
+          disabled={submitting}
+          aria-invalid={Boolean(fieldErrors.location)}
+          aria-describedby={
+            fieldErrors.location ? "menu-item-location-error" : undefined
+          }
+          className={controlClassName}
+          placeholder="Dhanmondi, Dhaka"
+        />
+        {fieldErrors.location ? (
+          <p
+            id="menu-item-location-error"
+            role="alert"
+            className="text-sm text-destructive"
+          >
+            {fieldErrors.location}
           </p>
         ) : null}
       </div>

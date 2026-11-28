@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowLeft, Plus, ShoppingCart } from "lucide-react"
+import { ArrowLeft, Crown, Plus, ShoppingCart } from "lucide-react"
 import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
 
@@ -221,6 +221,12 @@ export default function MenuItemDetailsPage() {
                 <span className="inline-flex rounded-full bg-accent px-3 py-1 text-xs font-medium text-accent-foreground">
                   {item.category}
                 </span>
+                {item.isPremium ? (
+                  <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1 text-xs font-medium text-primary-foreground">
+                    <Crown className="size-3" aria-hidden="true" />
+                    Premium
+                  </span>
+                ) : null}
                 <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
                   {item.name}
                 </h1>
@@ -243,13 +249,13 @@ export default function MenuItemDetailsPage() {
                   <Price value={item.price} className="text-2xl" />
                 </div>
 
-                {item.restaurant?.address ? (
+                {item.location || item.restaurant?.address ? (
                   <div className="mt-4 border-t border-border pt-4">
                     <p className="text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">
                       Location
                     </p>
                     <p className="mt-1 text-sm leading-relaxed text-foreground">
-                      {item.restaurant.address}
+                      {item.location ?? item.restaurant?.address}
                     </p>
                   </div>
                 ) : null}

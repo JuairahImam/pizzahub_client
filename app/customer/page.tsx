@@ -121,6 +121,7 @@ function CustomerDashboardContent() {
   const counts = {
     total: orders.length,
     pending: orders.filter((order) => order.status === "PENDING").length,
+    accepted: orders.filter((order) => order.status === "CONFIRMED").length,
     inProgress: orders.filter((order) => inProgressStatuses.has(order.status)).length,
     delivered: orders.filter((order) => order.status === "DELIVERED").length,
     rejected: orders.filter((order) => order.status === "REJECTED").length,
@@ -171,7 +172,7 @@ function CustomerDashboardContent() {
             <section className="grid gap-4 sm:grid-cols-3 xl:grid-cols-6">
               <StatCard label="Total orders" value={counts.total} />
               <StatCard label="Pending" value={counts.pending} />
-              <StatCard label="In progress" value={counts.inProgress} />
+              <StatCard label="Accepted" value={counts.accepted} />
               <StatCard label="Delivered" value={counts.delivered} />
               <StatCard label="Rejected" value={counts.rejected} />
               <StatCard label="Cancelled" value={counts.cancelled} />

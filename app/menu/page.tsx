@@ -200,7 +200,8 @@ function MenuPageContent() {
                       price={item.price}
                       restaurantId={item.restaurantId}
                       restaurantName={item.restaurant?.name}
-                      restaurantAddress={item.restaurant?.address}
+                      restaurantAddress={item.location ?? item.restaurant?.address}
+                      isPremium={item.isPremium}
                       available={item.isAvailable}
                       priority={index < 4}
                     />

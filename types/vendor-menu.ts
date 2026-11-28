@@ -7,6 +7,7 @@ export type VendorMenuItem = {
   name: string
   description: string
   category: string
+  location: string
   price: number
   imageUrl: string
   imageId: string
@@ -36,6 +37,7 @@ export type CreateVendorMenuItemInput = {
   name: string
   description: string
   category: string
+  location: string
   price: number
   imageUrl: string
   imageId: string
@@ -49,6 +51,7 @@ export type VendorMenuItemFormValues = {
   name: string
   description: string
   category: string
+  location: string
   price: string
   isAvailable: boolean
 }

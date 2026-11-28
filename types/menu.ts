@@ -18,6 +18,11 @@ export type MenuItem = {
   imageUrl: string
   images?: string[]
   isAvailable: boolean
+  approvalStatus?: string
+  itemName?: string
+  status?: string
+  location?: string | null
+  isPremium?: boolean
   createdAt: string
   updatedAt: string
   restaurant: MenuItemRestaurant | null

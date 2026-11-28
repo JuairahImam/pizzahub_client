@@ -199,6 +199,7 @@ function VendorMenuContent() {
         name: values.name,
         description: values.description,
         category: values.category,
+        location: values.location,
         price: Number(values.price),
         imageUrl: uploaded[0].imageUrl,
         imageId: uploaded[0].id,
@@ -246,6 +247,10 @@ function VendorMenuContent() {
 
     if (values.category !== editingItem.category) {
       updates.category = values.category
+    }
+
+    if (values.location !== editingItem.location) {
+      updates.location = values.location
     }
 
     const nextPrice = Number(values.price)
@@ -345,6 +350,7 @@ function VendorMenuContent() {
           name: editingItem.name,
           description: editingItem.description,
           category: editingItem.category,
+          location: editingItem.location ?? "",
           price: String(editingItem.price),
           isAvailable: editingItem.isAvailable,
           imageUrl: editingItem.imageUrl,

@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowRight, MapPin, Plus } from "lucide-react"
+import { ArrowRight, Crown, MapPin, Plus } from "lucide-react"
 import { useState } from "react"
 
 import { Price } from "@/components/price"
@@ -23,6 +23,7 @@ type MenuItemCardProps = {
   restaurantId: string
   restaurantName?: string | null
   restaurantAddress?: string | null
+  isPremium?: boolean
   available?: boolean
   priority?: boolean
   className?: string
@@ -39,6 +40,7 @@ export function MenuItemCard({
   restaurantId,
   restaurantName,
   restaurantAddress,
+  isPremium = false,
   available = true,
   priority = false,
   className,
@@ -98,6 +100,12 @@ export function MenuItemCard({
         <span className="absolute top-3 left-3 rounded-full bg-accent px-2.5 py-1 text-xs font-medium text-accent-foreground">
           {category}
         </span>
+        {isPremium ? (
+          <span className="absolute top-3 right-3 inline-flex items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-xs font-medium text-primary-foreground">
+            <Crown className="size-3" aria-hidden="true" />
+            Premium
+          </span>
+        ) : null}
       </div>
 
       <div className="flex flex-1 flex-col gap-3 p-5">

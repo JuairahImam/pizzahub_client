@@ -3,7 +3,7 @@ import type { OrderStatus } from "@/types/order"
 
 const STATUS_LABELS: Record<OrderStatus, string> = {
   PENDING: "Pending",
-  CONFIRMED: "Confirmed",
+  CONFIRMED: "Accepted",
   PREPARING: "Preparing",
   OUT_FOR_DELIVERY: "Out for delivery",
   DELIVERED: "Delivered",
