@@ -26,6 +26,14 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "i.ibb.co" },
       { protocol: "https", hostname: "*.ibb.co" },
+      // Vendor-supplied menu photography (direct image URLs).
+      { protocol: "https", hostname: "allforpizza.com" },
+      { protocol: "https", hostname: "thumbs.dreamstime.com" },
+      { protocol: "https", hostname: "pinoycupidgifts.com" },
+      { protocol: "https", hostname: "pizzapro.in" },
+      { protocol: "https", hostname: "m.media-amazon.com" },
+      { protocol: "https", hostname: "cdn.dotpe.in" },
+      { protocol: "https", hostname: "img.magnific.com" },
     ],
   },
 }
